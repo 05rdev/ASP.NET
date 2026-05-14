@@ -230,3 +230,4 @@ C:\Users\test\source\repos\HuynhVanDinhCMS_Solution\CMS.Backend\obj\Debug\net8.0
 C:\Users\test\source\repos\HuynhVanDinhCMS_Solution\CMS.Backend\obj\Debug\net8.0\CMS.Backend.pdb
 C:\Users\test\source\repos\HuynhVanDinhCMS_Solution\CMS.Backend\obj\Debug\net8.0\CMS.Backend.genruntimeconfig.cache
 C:\Users\test\source\repos\HuynhVanDinhCMS_Solution\CMS.Backend\obj\Debug\net8.0\ref\CMS.Backend.dll
+C:\Users\test\source\repos\HuynhVanDinhCMS_solution\CMS.Backend\obj\Debug\net8.0\CMS.Backend.sourcelink.json
