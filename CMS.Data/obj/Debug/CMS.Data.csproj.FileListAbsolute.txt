@@ -1,0 +1,8 @@
+C:\Users\test\source\repos\HuynhVanDinhCMS_Solution\CMS.Data\bin\Debug\CMD.Data.dll
+C:\Users\test\source\repos\HuynhVanDinhCMS_Solution\CMS.Data\bin\Debug\CMD.Data.pdb
+C:\Users\test\source\repos\HuynhVanDinhCMS_Solution\CMS.Data\bin\Debug\System.ComponentModel.Annotations.dll
+C:\Users\test\source\repos\HuynhVanDinhCMS_Solution\CMS.Data\obj\Debug\CMS.Data.csproj.AssemblyReference.cache
+C:\Users\test\source\repos\HuynhVanDinhCMS_Solution\CMS.Data\obj\Debug\CMS.Data.csproj.CoreCompileInputs.cache
+C:\Users\test\source\repos\HuynhVanDinhCMS_Solution\CMS.Data\obj\Debug\CMS.Data.csproj.Up2Date
+C:\Users\test\source\repos\HuynhVanDinhCMS_Solution\CMS.Data\obj\Debug\CMD.Data.dll
+C:\Users\test\source\repos\HuynhVanDinhCMS_Solution\CMS.Data\obj\Debug\CMD.Data.pdb
