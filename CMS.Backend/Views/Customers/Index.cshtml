@@ -1,0 +1,69 @@
+﻿@model IEnumerable<CMS.Data.Entities.Customer>
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="text-dark">QUẢN LÝ KHÁCH HÀNG</h2>
+        <button class="btn btn-success btn-sm">+ Thêm khách hàng mới</button>
+    </div>
+
+    <table class="table table-hover shadow-sm border align-middle">
+        <thead class="table-light">
+            <tr>
+                <th style="width: 5%;">ID</th>
+                <th style="width: 20%;">Họ và Tên</th>
+                <th style="width: 20%;">Email</th>
+                <th style="width: 15%;">Số Điện Thoại</th>
+                <th style="width: 20%;">Địa Chỉ</th>
+                <th style="width: 10%;" class="text-center">Đơn Mua</th>
+                <th style="width: 10%;" class="text-center">Thao Tác</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null && Model.Any())
+            {
+                foreach (var customer in Model)
+                {
+                    <tr>
+                        <td>@customer.Id</td>
+                        <td><strong>@customer.FullName</strong></td>
+                        <td>
+                            <a href="mailto:@customer.Email" class="text-decoration-none text-dark">
+                                @customer.Email
+                            </a>
+                        </td>
+                        <td>
+                            @(string.IsNullOrEmpty(customer.Phone) ? "---" : customer.Phone)
+                        </td>
+                        <td>
+                            @if (!string.IsNullOrEmpty(customer.Address))
+                            {
+                                <span class="d-block text-truncate" style="max-width: 220px;" title="@customer.Address">
+                                    @customer.Address
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="text-muted italic" style="font-size: 13px;">Chưa cập nhật</span>
+                            }
+                        </td>
+                        <td class="text-center">
+                            <span class="badge bg-primary rounded-pill">
+                                @(customer.Orders?.Count ?? 0) đơn
+                            </span>
+                        </td>
+                        <td class="text-center">
+                            <button class="btn btn-sm btn-outline-warning" title="Sửa"><i class="bi bi-pencil"></i> Sửa</button>
+                            <button class="btn btn-sm btn-outline-danger" title="Xóa"><i class="bi bi-trash"></i> Xóa</button>
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="7" class="text-center text-muted py-3">Không có khách hàng nào trong hệ thống.</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

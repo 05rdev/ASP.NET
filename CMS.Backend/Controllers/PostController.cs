@@ -1,43 +1,29 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using CMS.Data.Entities; // Quan trọng: Phải có dòng này để dùng lớp Post
-
+﻿/*
+ * Họ tên: Huỳnh Văn Định
+ * MSSV: 2123110052
+ * Version:1.0
+ */
+using CMS.Data;
+using CMS.Data.Entities;
+using Microsoft.AspNetCore.Mvc;
 namespace CMS.Backend.Controllers
 {
     public class PostController : Controller
     {
         // Hàm Index: Hiển thị danh sách bài viết mẫu
+        // 1. Khai báo biến _context lưu trữ kết nối database
+        private readonly ApplicationDbContext _context;
+
+        // 2. Tạo hàm khởi tạo (Constructor) để nhận DbContext được hệ thống tiêm vào
+        public PostController(ApplicationDbContext context)
+        {
+            _context = context;
+        }
+
+        // Hàm Index: Hiển thị danh sách bài viết mẫu
         public IActionResult Index()
         {
-            // 1. Tạo dữ liệu giả (Mock Data) cho Bài viết
-            var posts = new List<Post>
-            {
-                new Post
-                {
-                    Id = 1,
-                    Title = "Lộ trình học ASP.NET Core cho người mới",
-                    Content = "Nội dung bài viết về lộ trình học .NET...",
-                    ImageUrl = "https://via.placeholder.com/150",
-                    CreatedDate = DateTime.Now
-                },
-                new Post
-                {
-                    Id = 2,
-                    Title = "ReactJS và WebAPI: Xu hướng Fullstack 2026",
-                    Content = "Nội dung bài viết về sự kết hợp React và API...",
-                    ImageUrl = "https://via.placeholder.com/150",
-                    CreatedDate = DateTime.Now.AddDays(-1)
-                },
-                new Post
-                {
-                    Id = 3,
-                    Title = "Hướng dẫn cài đặt môi trường Visual Studio",
-                    Content = "Các bước cài đặt công cụ cần thiết cho lập trình viên...",
-                    ImageUrl = "https://via.placeholder.com/150",
-                    CreatedDate = DateTime.Now.AddDays(-2)
-                }
-            };
-
-            // 2. Gửi danh sách dữ liệu sang View
+            var posts = _context.Posts.ToList(); // Lấy tất cả bài viết
             return View(posts);
         }
 

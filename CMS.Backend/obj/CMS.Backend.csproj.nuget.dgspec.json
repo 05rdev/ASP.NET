@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\test\\source\\repos\\HuynhVanDinhCMS_solution\\CMS.Backend\\CMS.Backend.csproj": {}
+    "C:\\Users\\test\\source\\repos\\HuynhVanDinhCMS_Solution\\CMS.Backend\\CMS.Backend.csproj": {}
   },
   "projects": {
-    "C:\\Users\\test\\source\\repos\\HuynhVanDinhCMS_solution\\CMS.Backend\\CMS.Backend.csproj": {
+    "C:\\Users\\test\\source\\repos\\HuynhVanDinhCMS_Solution\\CMS.Backend\\CMS.Backend.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\test\\source\\repos\\HuynhVanDinhCMS_solution\\CMS.Backend\\CMS.Backend.csproj",
+        "projectUniqueName": "C:\\Users\\test\\source\\repos\\HuynhVanDinhCMS_Solution\\CMS.Backend\\CMS.Backend.csproj",
         "projectName": "CMS.Backend",
-        "projectPath": "C:\\Users\\test\\source\\repos\\HuynhVanDinhCMS_solution\\CMS.Backend\\CMS.Backend.csproj",
+        "projectPath": "C:\\Users\\test\\source\\repos\\HuynhVanDinhCMS_Solution\\CMS.Backend\\CMS.Backend.csproj",
         "packagesPath": "C:\\Users\\test\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\test\\source\\repos\\HuynhVanDinhCMS_solution\\CMS.Backend\\obj\\",
+        "outputPath": "C:\\Users\\test\\source\\repos\\HuynhVanDinhCMS_Solution\\CMS.Backend\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -32,8 +32,8 @@
           "net8.0": {
             "targetAlias": "net8.0",
             "projectReferences": {
-              "C:\\Users\\test\\source\\repos\\HuynhVanDinhCMS_solution\\CMS.Data\\CMS.Data.csproj": {
-                "projectPath": "C:\\Users\\test\\source\\repos\\HuynhVanDinhCMS_solution\\CMS.Data\\CMS.Data.csproj"
+              "C:\\Users\\test\\source\\repos\\HuynhVanDinhCMS_Solution\\CMS.Data\\CMS.Data.csproj": {
+                "projectPath": "C:\\Users\\test\\source\\repos\\HuynhVanDinhCMS_Solution\\CMS.Data\\CMS.Data.csproj"
               }
             }
           }
@@ -54,6 +54,22 @@
         "net8.0": {
           "targetAlias": "net8.0",
           "dependencies": {
+            "Microsoft.EntityFrameworkCore.Design": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[8.0.27, )"
+            },
+            "Microsoft.EntityFrameworkCore.SqlServer": {
+              "target": "Package",
+              "version": "[8.0.27, )"
+            },
+            "Microsoft.EntityFrameworkCore.Tools": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[8.0.27, )"
+            },
             "Microsoft.VisualStudio.Web.CodeGeneration.Design": {
               "target": "Package",
               "version": "[8.0.23, )"
@@ -82,20 +98,91 @@
         }
       }
     },
-    "C:\\Users\\test\\source\\repos\\HuynhVanDinhCMS_solution\\CMS.Data\\CMS.Data.csproj": {
+    "C:\\Users\\test\\source\\repos\\HuynhVanDinhCMS_Solution\\CMS.Data\\CMS.Data.csproj": {
+      "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\test\\source\\repos\\HuynhVanDinhCMS_solution\\CMS.Data\\CMS.Data.csproj",
+        "projectUniqueName": "C:\\Users\\test\\source\\repos\\HuynhVanDinhCMS_Solution\\CMS.Data\\CMS.Data.csproj",
         "projectName": "CMS.Data",
-        "projectPath": "C:\\Users\\test\\source\\repos\\HuynhVanDinhCMS_solution\\CMS.Data\\CMS.Data.csproj",
-        "UsingMicrosoftNETSdk": false,
+        "projectPath": "C:\\Users\\test\\source\\repos\\HuynhVanDinhCMS_Solution\\CMS.Data\\CMS.Data.csproj",
+        "packagesPath": "C:\\Users\\test\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\test\\source\\repos\\HuynhVanDinhCMS_Solution\\CMS.Data\\obj\\",
+        "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\test\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net8.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
         "frameworks": {
-          "net472": {
+          "net8.0": {
+            "targetAlias": "net8.0",
             "projectReferences": {}
           }
-        }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        },
+        "SdkAnalysisLevel": "9.0.300"
       },
       "frameworks": {
-        "net472": {}
+        "net8.0": {
+          "targetAlias": "net8.0",
+          "dependencies": {
+            "Microsoft.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[8.0.27, )"
+            },
+            "Microsoft.EntityFrameworkCore.Design": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[8.0.27, )"
+            },
+            "Microsoft.EntityFrameworkCore.SqlServer": {
+              "target": "Package",
+              "version": "[8.0.27, )"
+            },
+            "Microsoft.EntityFrameworkCore.Tools": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[8.0.27, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.308/PortableRuntimeIdentifierGraph.json"
+        }
       }
     }
   }
