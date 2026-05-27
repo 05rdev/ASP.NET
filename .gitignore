@@ -1,5 +1,6 @@
 cms.frontend/node_modules
 CMS.Backend/bin
-CMS.Backend/obj/Debug
-CMS.Data/obj/Debug
+CMS.Backend/obj
+CMS.Data/obj
+CMS.Data/bin
 .vs

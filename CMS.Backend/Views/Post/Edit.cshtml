@@ -45,7 +45,7 @@ Version:1.1 *@
                         <div class="mb-3">
                             <label class="form-label fw-bold text-secondary">Hình ảnh đại diện:</label>
                             <input type="file" name="uploadImage" id="uploadImage" class="form-control border-2 rounded-2" accept="image/*" />
-                            
+
                             <!-- Preview Image Section -->
                             <div class="mt-2 text-center border rounded-2 p-2 bg-light" id="imagePreviewContainer">
                                 <span class="d-block text-muted small mb-1" id="previewLabel">Ảnh hiện tại:</span>
@@ -82,8 +82,16 @@ Version:1.1 *@
 </div>
 
 @section Scripts {
+    <script src="https://cdn.ckeditor.com/ckeditor5/39.0.1/classic/ckeditor.js"></script>
     <script>
-        // Preview selected image before uploading
+        // 1. Kích hoạt trình soạn thảo cho thẻ textarea có id là 'Content'
+        ClassicEditor
+            .create(document.querySelector('#Content'))
+            .catch(error => {
+                console.error(error);
+            });
+
+        // 2. Preview selected image before uploading
         document.getElementById('uploadImage').addEventListener('change', function (event) {
             const file = event.target.files[0];
             if (file) {
