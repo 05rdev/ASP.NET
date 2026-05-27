@@ -6,6 +6,7 @@
 using CMS.Data;
 using CMS.Data.Entities;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 namespace CMS.Backend.Controllers
 {
     public class PostController : Controller
@@ -20,30 +21,47 @@ namespace CMS.Backend.Controllers
             _context = context;
         }
 
-        // Hàm Index: Hiển thị danh sách bài viết mẫu
-        public IActionResult Index()
+        // Tham số 'id' được truyền vào từ URL (ví dụ: /Post/Index/5)
+        public IActionResult Index(int? id)
         {
-            var posts = _context.Posts.ToList(); // Lấy tất cả bài viết
+            // 1. Kiểm tra nếu không có id truyền vào thì trả về lỗi hoặc toàn bộ bài viết
+            if (id == null)
+            {
+                return BadRequest("Vui lòng cung cấp mã danh mục.");
+            }
+
+            // 2. Sử dụng LINQ với tham số 'id' linh hoạt
+            var posts = _context.Posts
+                        .Where(p => p.CategoryId == id)
+                        .OrderByDescending(p => p.CreatedDate)
+                        .Include(p => p.Category)
+                        .ToList();
+
+
+            // 3. Truyền dữ liệu ra View
             return View(posts);
         }
 
-        // Hàm Details: Hiển thị chi tiết một bài viết (Bổ sung  khá giỏi)
+
+        // Hàm Details: Hiển thị chi tiết một bài viết
         public IActionResult Details(int id)
         {
-            // Giả lập tìm bài viết trong Database bằng Id
-            // Trong thực tế tuần sau sẽ là: _context.Posts.Find(id);
-            var post = new Post
+            // 1. Truy vấn bài viết theo ID
+            // Sử dụng .Include(p => p.Category) để lấy kèm thông tin Danh mục (Join bảng)
+            var post = _context.Posts
+                .Include(p => p.Category)
+                .FirstOrDefault(p => p.Id == id);
+
+            // 2. Kiểm tra nếu không tìm thấy bài viết (tránh lỗi màn hình trắng)
+            if (post == null)
             {
-                Id = id,
-                Title = "Nội dung chi tiết bài viết số " + id,
-                Content = "Đây là nội dung đầy đủ của bài viết mà bạn vừa click vào. Ở đây  có thể viết dài hơn để thấy sự khác biệt với trang danh sách.",
-                ImageUrl = "https://via.placeholder.com/600x300", // Ảnh to hơn
-                CreatedDate = DateTime.Now
-            };
+                return NotFound(); // Trả về trang lỗi 404
+            }
 
-            if (post == null) return NotFound();
-
+            // 3. Truyền dữ liệu sang View
             return View(post);
         }
+
+
     }
 }

@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "46mXuGo7jwo=",
+  "dgSpecHash": "gygUWs8WmPc=",
   "success": true,
-  "projectFilePath": "C:\\Users\\test\\source\\repos\\HuynhVanDinhCMS_Solution\\CMS.Backend\\CMS.Backend.csproj",
+  "projectFilePath": "C:\\Users\\test\\source\\repos\\HuynhVanDinhCMS_solution\\CMS.Backend\\CMS.Backend.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\test\\.nuget\\packages\\azure.core\\1.38.0\\azure.core.1.38.0.nupkg.sha512",
     "C:\\Users\\test\\.nuget\\packages\\azure.identity\\1.11.4\\azure.identity.1.11.4.nupkg.sha512",

@@ -1,4 +1,8 @@
-﻿@model CMS.Data.Entities.Post
+﻿@* Họ tên: Huỳnh Văn Định
+MSSV: 2123110052
+Version:1.1 *@
+
+@model CMS.Data.Entities.Post
 
 <div class="container mt-5">
     <nav aria-label="breadcrumb">
@@ -11,6 +15,7 @@
     <div class="row justify-content-center">
         <div class="col-md-10">
             <h1 class="display-4 fw-bold text-primary">@Model.Title</h1>
+            <span class="badge bg-info text-dark">@Model.Category.Name</span>
             <p class="text-muted">Đăng ngày: @Model.CreatedDate.ToString("dd/MM/yyyy HH:mm")</p>
             <hr />
 

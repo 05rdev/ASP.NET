@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\test\\source\\repos\\HuynhVanDinhCMS_Solution\\CMS.Data\\CMS.Data.csproj": {}
+    "C:\\Users\\test\\source\\repos\\HuynhVanDinhCMS_solution\\CMS.Data\\CMS.Data.csproj": {}
   },
   "projects": {
-    "C:\\Users\\test\\source\\repos\\HuynhVanDinhCMS_Solution\\CMS.Data\\CMS.Data.csproj": {
+    "C:\\Users\\test\\source\\repos\\HuynhVanDinhCMS_solution\\CMS.Data\\CMS.Data.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\test\\source\\repos\\HuynhVanDinhCMS_Solution\\CMS.Data\\CMS.Data.csproj",
+        "projectUniqueName": "C:\\Users\\test\\source\\repos\\HuynhVanDinhCMS_solution\\CMS.Data\\CMS.Data.csproj",
         "projectName": "CMS.Data",
-        "projectPath": "C:\\Users\\test\\source\\repos\\HuynhVanDinhCMS_Solution\\CMS.Data\\CMS.Data.csproj",
+        "projectPath": "C:\\Users\\test\\source\\repos\\HuynhVanDinhCMS_solution\\CMS.Data\\CMS.Data.csproj",
         "packagesPath": "C:\\Users\\test\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\test\\source\\repos\\HuynhVanDinhCMS_Solution\\CMS.Data\\obj\\",
+        "outputPath": "C:\\Users\\test\\source\\repos\\HuynhVanDinhCMS_solution\\CMS.Data\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
