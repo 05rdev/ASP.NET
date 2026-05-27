@@ -25,10 +25,10 @@ namespace CMS.Backend.Controllers
         public IActionResult Index(int? id)
         {
             // 1. Kiểm tra nếu không có id truyền vào thì trả về lỗi hoặc toàn bộ bài viết
-            if (id == null)
-            {
-                return BadRequest("Vui lòng cung cấp mã danh mục.");
-            }
+            //if (id == null)
+            //{
+            //    return BadRequest("Vui lòng cung cấp mã danh mục.");
+            //}
 
             // 2. Sử dụng LINQ với tham số 'id' linh hoạt
             var posts = _context.Posts
