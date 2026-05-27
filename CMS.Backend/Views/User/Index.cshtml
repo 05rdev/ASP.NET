@@ -3,12 +3,17 @@ MSSV: 2123110052
 Version:1.1 *@
 
 @model IEnumerable<CMS.Data.Entities.User>
-
+@{
+    Layout = "_LayoutAdmin";
+}
 <div class="container mt-4">
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h2 class="text-dark">QUẢN LÝ THÀNH VIÊN</h2>
-        <button class="btn btn-success btn-sm">+ Thêm thành viên mới</button>
+        <a asp-action="Create" class="btn btn-success">
+            <i class="bi bi-plus-circle"></i> Thêm thành viên mới
+        </a>
     </div>
+
 
     <table class="table table-hover shadow-sm border">
         <thead class="table-light">
@@ -28,9 +33,17 @@ Version:1.1 *@
                     <td><strong>@user.Username</strong></td>
                     <td>@user.FullName</td>
                     <td>
-                        @if (user.Role == "Administrator")
+                        @if (user.Role == "Admin")
                         {
                             <span class="badge bg-danger">@user.Role</span>
+                        }
+                        else if (user.Role == "Editor")
+                        {
+                            <span class="badge bg-warning text-dark">@user.Role</span>
+                        }
+                        else if (user.Role == "Moderator")
+                        {
+                            <span class="badge bg-primary">@user.Role</span>
                         }
                         else
                         {
@@ -38,8 +51,8 @@ Version:1.1 *@
                         }
                     </td>
                     <td>
-                        <button class="btn btn-sm btn-outline-warning">Sửa</button>
-                        <button class="btn btn-sm btn-outline-danger">Xóa</button>
+                        <a asp-action="Edit" asp-route-id="@user.Id" class="btn btn-sm btn-outline-warning">Sửa</a>
+                        <a asp-action="Delete" asp-route-id="@user.Id" class="btn btn-sm btn-outline-danger" onclick="return confirm('Bạn có chắc chắn muốn xóa thành viên này không?');">Xóa</a>
                     </td>
                 </tr>
             }
