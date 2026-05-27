@@ -1,4 +1,4 @@
-﻿@* Họ tên: Huỳnh Văn Định
+@* Họ tên: Huỳnh Văn Định
 MSSV: 2123110052
 Version:1.1 *@
 
@@ -10,52 +10,68 @@ Version:1.1 *@
 }
 
 <div class="container mt-4">
-    <div class="card shadow">
-        <div class="card-header bg-primary text-white">
-            <h4 class="mb-0"><i class="bi bi-file-earmark-plus"></i> SỬA BÀI VIẾT</h4>
+    <div class="card shadow border-0 rounded-3">
+        <div class="card-header bg-primary text-white py-3 rounded-top-3">
+            <h4 class="mb-0"><i class="bi bi-pencil-square"></i> SỬA BÀI VIẾT</h4>
         </div>
-        <div class="card-body">
-            <form asp-action="Edit" method="post">
+        <div class="card-body p-4">
+            <form asp-action="Edit" method="post" enctype="multipart/form-data">
                 <input type="hidden" asp-for="Id" />
+                <input type="hidden" asp-for="ImageUrl" />
 
                 <div class="row">
+                    <!-- Left column -->
                     <div class="col-md-8">
                         <div class="mb-3">
-                            <label class="form-label fw-bold">Tiêu đề bài viết:</label>
-                            <input asp-for="Title" class="form-control" placeholder="Nhập tiêu đề..." />
+                            <label class="form-label fw-bold text-secondary">Tiêu đề bài viết:</label>
+                            <input asp-for="Title" class="form-control form-control-lg border-2 rounded-2" placeholder="Nhập tiêu đề..." required />
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label fw-bold">Nội dung chi tiết:</label>
-                            <textarea asp-for="Content" class="form-control" rows="10" placeholder="Viết nội dung tại đây..."></textarea>
+                            <label class="form-label fw-bold text-secondary">Nội dung chi tiết:</label>
+                            <textarea asp-for="Content" class="form-control border-2 rounded-2" rows="10" placeholder="Viết nội dung tại đây..."></textarea>
                         </div>
                     </div>
 
+                    <!-- Right column -->
                     <div class="col-md-4">
                         <div class="mb-3">
-                            <label class="form-label fw-bold">Chuyên mục:</label>
-                            <select asp-for="CategoryId" class="form-select" asp-items="ViewBag.CategoryList">
+                            <label class="form-label fw-bold text-secondary">Chuyên mục:</label>
+                            <select asp-for="CategoryId" class="form-select border-2 rounded-2" asp-items="ViewBag.CategoryList" required>
                                 <option value="">-- Chọn danh mục --</option>
                             </select>
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label fw-bold">Link ảnh đại diện (URL):</label>
-                            <input asp-for="ImageUrl" class="form-control" placeholder="https://..." />
+                            <label class="form-label fw-bold text-secondary">Hình ảnh đại diện:</label>
+                            <input type="file" name="uploadImage" id="uploadImage" class="form-control border-2 rounded-2" accept="image/*" />
+                            
+                            <!-- Preview Image Section -->
+                            <div class="mt-2 text-center border rounded-2 p-2 bg-light" id="imagePreviewContainer">
+                                <span class="d-block text-muted small mb-1" id="previewLabel">Ảnh hiện tại:</span>
+                                @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                                {
+                                    <img id="imagePreview" src="@Model.ImageUrl" class="img-fluid rounded-2 shadow-sm" style="max-height: 150px; object-fit: contain;" />
+                                }
+                                else
+                                {
+                                    <img id="imagePreview" src="/images/no-image.png" class="img-fluid rounded-2 shadow-sm" style="max-height: 150px; object-fit: contain;" />
+                                }
+                            </div>
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label fw-bold">Ngày đăng:</label>
-                            <input asp-for="CreatedDate" type="date" class="form-control" value="@DateTime.Now.ToString("yyyy-MM-dd")" />
+                            <label class="form-label fw-bold text-secondary">Ngày đăng:</label>
+                            <input asp-for="CreatedDate" type="date" class="form-control border-2 rounded-2" value="@Model.CreatedDate.ToString("yyyy-MM-dd")" />
                         </div>
 
-                        <hr />
+                        <hr class="my-4" />
                         <div class="d-grid gap-2">
-                            <button type="submit" class="btn btn-success">
-                                <i class="bi bi-cloud-arrow-up"></i> Lưu và Đăng bài
+                            <button type="submit" class="btn btn-success btn-lg shadow-sm">
+                                <i class="bi bi-cloud-arrow-up-fill"></i> Lưu thay đổi
                             </button>
-                            <a asp-action="Index" class="btn btn-secondary">
-                                <i class="bi bi-arrow-left"></i> Quay lại danh sách
+                            <a asp-action="Index" class="btn btn-secondary btn-lg shadow-sm">
+                                <i class="bi bi-arrow-left-short"></i> Hủy & Quay lại
                             </a>
                         </div>
                     </div>
@@ -64,3 +80,21 @@ Version:1.1 *@
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        // Preview selected image before uploading
+        document.getElementById('uploadImage').addEventListener('change', function (event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    const preview = document.getElementById('imagePreview');
+                    preview.src = e.target.result;
+                    document.getElementById('previewLabel').textContent = "Ảnh mới chọn:";
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    </script>
+}

@@ -1,13 +1,18 @@
-﻿@* Họ tên: Huỳnh Văn Định
+@* Họ tên: Huỳnh Văn Định
 MSSV: 2123110052
 Version:1.1 *@
 
 @model IEnumerable<CMS.Data.Entities.Customer>
+@{
+    Layout = "_LayoutAdmin";
+}
 
 <div class="container mt-4">
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h2 class="text-dark">QUẢN LÝ KHÁCH HÀNG</h2>
-        <button class="btn btn-success btn-sm">+ Thêm khách hàng mới</button>
+        <a asp-action="Create" class="btn btn-success btn-sm">
+            <i class="bi bi-plus-circle"></i> Thêm khách hàng mới
+        </a>
     </div>
 
     <table class="table table-hover shadow-sm border align-middle">
@@ -56,8 +61,13 @@ Version:1.1 *@
                             </span>
                         </td>
                         <td class="text-center">
-                            <button class="btn btn-sm btn-outline-warning" title="Sửa"><i class="bi bi-pencil"></i> Sửa</button>
-                            <button class="btn btn-sm btn-outline-danger" title="Xóa"><i class="bi bi-trash"></i> Xóa</button>
+                            <a asp-action="Edit" asp-route-id="@customer.Id" class="btn btn-sm btn-outline-warning" title="Sửa">
+                                <i class="bi bi-pencil"></i> Sửa
+                            </a>
+                            <a asp-action="Delete" asp-route-id="@customer.Id" class="btn btn-sm btn-outline-danger" title="Xóa"
+                               onclick="return confirm('Bạn có chắc chắn muốn xóa khách hàng này?')">
+                                <i class="bi bi-trash"></i> Xóa
+                            </a>
                         </td>
                     </tr>
                 }

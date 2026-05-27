@@ -248,10 +248,10 @@ C:\Users\test\source\repos\HuynhVanDinhCMS_solution\CMS.Backend\obj\Debug\net8.0
 C:\Users\test\source\repos\HuynhVanDinhCMS_solution\CMS.Backend\obj\Debug\net8.0\staticwebassets.build.json.cache
 C:\Users\test\source\repos\HuynhVanDinhCMS_solution\CMS.Backend\obj\Debug\net8.0\staticwebassets.development.json
 C:\Users\test\source\repos\HuynhVanDinhCMS_solution\CMS.Backend\obj\Debug\net8.0\staticwebassets.build.endpoints.json
-C:\Users\test\source\repos\HuynhVanDinhCMS_solution\CMS.Backend\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt
 C:\Users\test\source\repos\HuynhVanDinhCMS_solution\CMS.Backend\obj\Debug\net8.0\CMS.Back.83063402.Up2Date
 C:\Users\test\source\repos\HuynhVanDinhCMS_solution\CMS.Backend\obj\Debug\net8.0\CMS.Backend.dll
 C:\Users\test\source\repos\HuynhVanDinhCMS_solution\CMS.Backend\obj\Debug\net8.0\refint\CMS.Backend.dll
 C:\Users\test\source\repos\HuynhVanDinhCMS_solution\CMS.Backend\obj\Debug\net8.0\CMS.Backend.pdb
 C:\Users\test\source\repos\HuynhVanDinhCMS_solution\CMS.Backend\obj\Debug\net8.0\CMS.Backend.genruntimeconfig.cache
 C:\Users\test\source\repos\HuynhVanDinhCMS_solution\CMS.Backend\obj\Debug\net8.0\ref\CMS.Backend.dll
+C:\Users\test\source\repos\HuynhVanDinhCMS_solution\CMS.Backend\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt
