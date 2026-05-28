@@ -54,6 +54,12 @@ namespace CMS.Data.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("DisplayOrder")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -61,7 +67,7 @@ namespace CMS.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("CategoriesProducts");
+                    b.ToTable("CategoryProduct");
                 });
 
             modelBuilder.Entity("CMS.Data.Entities.Customer", b =>

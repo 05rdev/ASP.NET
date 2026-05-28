@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Họ tên: Huỳnh Văn Định
  * MSSV: 2123110052
  * Version:1.0
@@ -23,6 +23,10 @@ namespace CMS.Data.Entities
         public string Name { get; set; }
 
         public string? Description { get; set; }
+
+        public int DisplayOrder { get; set; } // Thứ tự hiển thị trên giao diện
+
+        public bool IsActive { get; set; } = true; // Trạng thái kích hoạt danh mục
 
         // Quan hệ: Một danh mục có nhiều sản phẩm
         public virtual ICollection<Product>? Products { get; set; }

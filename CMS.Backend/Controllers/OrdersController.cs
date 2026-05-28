@@ -3,107 +3,72 @@
  * MSSV: 2123110052
  * Version:1.1
  */
-using CMS.Data;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore; // <--- Bắt buộc phải thêm dòng này để dùng được .Include
+using CMS.Data; // Thay bằng namespace thực tế của anh
 using CMS.Data.Entities;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Threading.Tasks;
 
 namespace CMS.Backend.Controllers
 {
-    [Authorize(Roles = "Admin")]
-    public class OrdersController : Controller
+    [Route("api/[controller]")]
+    [ApiController]
+    public class OrdersController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
 
-        // Kết nối vào Controller
         public OrdersController(ApplicationDbContext context)
         {
             _context = context;
         }
 
-        public IActionResult Index()
+        /// <summary>
+        /// API: Tiếp nhận đơn đặt hàng từ giỏ hàng FrontEnd gửi lên
+        /// Đường dẫn: POST https://localhost:xxxx/api/Orders
+        /// </summary>
+        [HttpPost]
+        public async Task<IActionResult> CreateOrder([FromBody] OrderInputDTO input)
         {
-            // Lấy dữ liệu từ bảng Orders đồng thời JOIN sang bảng Customers để lấy thông tin khách hàng
-            var data = _context.Orders
-                               .Include(o => o.Customer)
-                               .ToList();
-
-            return View(data);
-        }
-
-        public IActionResult Details(int id)
-        {
-            // Tìm đơn hàng theo ID, đồng thời nạp kèm Khách hàng (Customer) 
-            // và danh sách chi tiết (OrderDetails) chứa thông tin Sản phẩm (Product)
-            var order = _context.Orders
-                .Include(o => o.Customer)
-                .Include(o => o.OrderDetails)
-                    .ThenInclude(od => od.Product)
-                .FirstOrDefault(o => o.Id == id);
-
-            if (order == null)
+            // 1. Kiểm tra kịch bản lỗi bảo vệ: Nếu dữ liệu truyền lên trống rỗng
+            if (input == null)
             {
-                return NotFound();
+                return BadRequest(new { message = "Dữ liệu đơn hàng không hợp lệ" });
             }
 
-            return View(order);
-        }
-
-        // 1. Hàm GET: Hiển thị giao diện Form thêm đơn hàng mới
-        [HttpGet]
-        public IActionResult Create()
-        {
-            ViewBag.CustomerId = new SelectList(_context.Customers, "Id", "FullName");
-            return View();
-        }
-
-        // 2. Hàm POST: Thêm đơn hàng mới vào cơ sở dữ liệu
-        [HttpPost]
-        public IActionResult Create(Order model)
-        {
-            // Thêm vào bộ nhớ tạm
-            _context.Orders.Add(model);
-            
-            // Lưu thật sự vào SQL
-            _context.SaveChanges();
-
-            return RedirectToAction("Index");
-        }
-
-        // 1. Hàm GET: Hiển thị Form kèm dữ liệu cũ của Đơn hàng để sửa
-        [HttpGet]
-        public IActionResult Edit(int id)
-        {
-            var order = _context.Orders.Find(id);
-            if (order == null) return NotFound();
-
-            ViewBag.CustomerId = new SelectList(_context.Customers, "Id", "FullName", order.CustomerId);
-            return View(order);
-        }
-
-        // 2. Hàm POST: Lưu thay đổi thông tin đơn hàng
-        [HttpPost]
-        public IActionResult Edit(Order model)
-        {
-            _context.Orders.Update(model);
-            _context.SaveChanges();
-
-            return RedirectToAction("Index");
-        }
-
-        // Action xóa đơn hàng
-        public IActionResult Delete(int id)
-        {
-            var order = _context.Orders.Find(id);
-            if (order != null)
+            try
             {
-                _context.Orders.Remove(order);
-                _context.SaveChanges();
-            }
+                // Bước A: Tự động khởi tạo cấu trúc thực thể Đơn hàng mới
+                // LƯU Ý: Đã hiệu chỉnh bỏ trường TotalAmount, dùng trường [Notes] số nhiều theo đúng hình ảnh thực tế
+                var newOrder = new Order
+                {
+                    OrderDate = DateTime.Now, // Tự động lấy ngày giờ thực tế máy tính lúc mua
+                    CustomerId = input.CustomerId,
+                    Status = 0,               // 0: Mặc định đơn hàng mới ở trạng thái "Chờ xử lý"
+                    Notes = input.Notes
+                };
 
-            return RedirectToAction("Index");
+                // Bước B: Thêm vào bảng tạm và chốt lưu xuống SQL Server
+                _context.Orders.Add(newOrder);
+                await _context.SaveChangesAsync(); // Ép hệ thống sinh ra mã ID Đơn hàng tự động tăng
+
+                // Bước C: Trả về mã thành công 201 Created và gửi ngược lại mã ID đơn hàng vừa tạo
+                return StatusCode(201, new
+                {
+                    message = "Đặt hàng thành công!",
+                    orderId = newOrder.Id
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Lỗi xử lý tạo đơn hàng ngầm", detail = ex.Message });
+            }
         }
+    }
+
+    // LỚP DTO TRUNG GIAN ĐỂ HỨNG DỮ LIỆU TỪ FRONTEND TRUYỀN LÊN
+    public class OrderInputDTO
+    {
+        public int CustomerId { get; set; }
+        public string Notes { get; set; }
     }
 }

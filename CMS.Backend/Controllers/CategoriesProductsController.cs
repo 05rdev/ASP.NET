@@ -3,91 +3,64 @@
  * MSSV: 2123110052
  * Version:1.0
  */
-using CMS.Data;
-using CMS.Data.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Authorization;
+using CMS.Data; // Đảm bảo khớp với Namespace chứa ApplicationDbContext trong Solution
+using System.Threading.Tasks;
+using System.Linq;
 
 namespace CMS.Backend.Controllers
 {
-    [Authorize(Roles = "Admin")]
-    public class CategoriesProductsController : Controller
+    // 1. Cấu hình đường dẫn API: api/CategoriesProducts
+    [Route("api/[controller]")]
+
+    // 2. Kích hoạt tính năng tự động kiểm tra lỗi dữ liệu (Validation)
+    [ApiController]
+
+    // 3. Kế thừa ControllerBase để tối ưu bộ nhớ cho API thuần dữ liệu JSON
+    public class CategoriesProductsController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
 
-        // Kết nối vào Controller
+        // 4. Hàm khởi tạo: Nạp cơ sở dữ liệu SQL Server vào Controller thông qua DI
         public CategoriesProductsController(ApplicationDbContext context)
         {
             _context = context;
         }
 
-        public IActionResult Index()
-        {
-            // Sử dụng .Include(c => c.Products) để nạp kèm danh sách sản phẩm
-            var data = _context.CategoriesProducts
-                               .Include(c => c.Products)
-                               .ToList();
-
-            return View(data);
-        }
-
-        // 1. Hàm GET: Hiển thị giao diện Form thêm danh mục sản phẩm
+        /// <summary>
+        /// API lấy toàn bộ danh mục sản phẩm thời trang (Giao thức GET)
+        /// Đường dẫn gọi dữ liệu: GET https://localhost:xxxx/api/CategoriesProducts
+        /// </summary>
         [HttpGet]
-        public IActionResult Create()
+        public async Task<IActionResult> GetAll()
         {
-            return View();
-        }
-
-        // 2. Hàm POST: Thêm danh mục sản phẩm mới vào SQL
-        [HttpPost]
-        public IActionResult Create(CategoryProduct model)
-        {
-            // Kiểm tra trùng tên danh mục
-            var checkExist = _context.CategoriesProducts.Any(c => c.Name == model.Name);
-            if (checkExist)
+            try
             {
-                ModelState.AddModelError("Name", "Tên danh mục này đã tồn tại!");
-                return View(model);
+                // Bước A: Quét bảng dữ liệu CategoriesProducts số nhiều dưới SQL Server lên
+                var categories = await _context.CategoriesProducts
+                    .OrderBy(c => c.DisplayOrder) // Ưu tiên sắp xếp theo thứ tự hiển thị
+                    .Select(c => new {
+                        // Bước B: Kỹ thuật gọt tỉa (Projection) - chỉ lấy các trường cần thiết ra FrontEnd
+                        c.Id,
+                        c.Name,
+                        c.Description,
+                        c.DisplayOrder,
+                        c.IsActive
+                    })
+                    .ToListAsync(); // Chuyển đổi bất đồng bộ sang dạng danh sách mảng
+
+                // Bước C: Trả về mã thành công HTTP 200 OK đính kèm chuỗi chữ JSON sạch
+                return Ok(categories);
             }
-
-            _context.CategoriesProducts.Add(model);
-            _context.SaveChanges();
-
-            return RedirectToAction("Index");
-        }
-
-        // 1. Hàm GET: Tìm và hiển thị thông tin danh mục cũ cần sửa
-        [HttpGet]
-        public IActionResult Edit(int id)
-        {
-            var categoryProduct = _context.CategoriesProducts.Find(id);
-            if (categoryProduct == null) return NotFound();
-
-            return View(categoryProduct);
-        }
-
-        // 2. Hàm POST: Nhận thông tin danh mục sửa đổi và lưu lại
-        [HttpPost]
-        public IActionResult Edit(CategoryProduct model)
-        {
-            _context.CategoriesProducts.Update(model);
-            _context.SaveChanges();
-
-            return RedirectToAction("Index");
-        }
-
-        // Action xóa danh mục sản phẩm
-        public IActionResult Delete(int id)
-        {
-            var categoryProduct = _context.CategoriesProducts.Find(id);
-            if (categoryProduct != null)
+            catch (System.Exception ex)
             {
-                _context.CategoriesProducts.Remove(categoryProduct);
-                _context.SaveChanges();
+                // Bảo vệ hệ thống: Nếu sập kết nối SQL thì trả về lỗi 500 kèm lời nhắn lý do lỗi
+                return StatusCode(500, new { 
+                    message = "Lỗi kết nối cơ sở dữ liệu hệ thống", 
+                    detail = ex.Message 
+                });
             }
-
-            return RedirectToAction("Index");
         }
     }
 }
