@@ -134,7 +134,7 @@
                         @if (User.Identity.IsAuthenticated)
                         {
                             <li class="nav-item">
-                                <span class="nav-link text-dark">
+                                <span class="nav-link text-white">
                                     Chào, <strong>@User.FindFirst("FullName")?.Value</strong> (@User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value)
                                 </span>
                             </li>
