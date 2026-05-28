@@ -1,6 +1,52 @@
-cms.frontend/node_modules
-CMS.Backend/obj
-CMS.Backend/bin
-CMS.Data/obj
-CMS.Data/bin
-.vs
+# Dependencies
+node_modules/
+cms.frontend/node_modules/
+frontend/node_modules/
+
+# Build outputs
+bin/
+obj/
+CMS.Backend/bin/
+CMS.Backend/obj/
+CMS.Data/bin/
+CMS.Data/obj/
+
+# Visual Studio
+.vs/
+.vscode/
+
+# User-specific files
+*.user
+*.userosscache
+*.suo
+
+# Publish files
+*.pubxml.user
+
+# Backup files
+*.bak
+*.tmp
+
+# Logs
+*.log
+logs/
+
+# Package files
+*.nupkg
+
+# Rider / JetBrains
+.idea/
+
+# macOS
+.DS_Store
+
+# Linux
+._*
+
+# Code coverage
+coverage/
+*.coverage
+*.coverage.xml
+
+# Publish folder
+publish/

@@ -1,5 +1,5 @@
-﻿/*
- * H? tên: Hu?nh V?n ??nh
+/*
+ * Họ tên: Huỳnh Văn Định
  * MSSV: 2123110052
  * Version:1.0
  */
@@ -7,7 +7,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using CMS.Data; // Thư mục chứa DbContext
 using System.Linq;
+using Microsoft.AspNetCore.Authorization;
 
+[Authorize]
 public class HomeController : Controller
 {
     private readonly ApplicationDbContext _context;

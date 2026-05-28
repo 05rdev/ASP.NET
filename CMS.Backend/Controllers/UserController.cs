@@ -4,12 +4,15 @@
  * Version:1.0
  */
 using CMS.Data;
-using CMS.Data.Entities; // Phải có dòng này để dùng lớp User
+using CMS.Data.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CMS.Backend.Controllers
 {
+    [Authorize(Roles = "Admin")]
+
     public class UserController : Controller
     {
         // Hàm Index: Hiển thị danh sách thành viên quản trị
