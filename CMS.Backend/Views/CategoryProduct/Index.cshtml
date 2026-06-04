@@ -1,0 +1,121 @@
+@* Họ tên: Huỳnh Văn Định
+MSSV: 2123110052
+Version: 1.2 *@
+
+@model IEnumerable<CMS.Data.Entities.CategoryProduct>
+@{
+    Layout = "_LayoutAdmin";
+    ViewData["Title"] = "Quản lý Danh mục Sản phẩm";
+}
+
+<div class="container-fluid py-4">
+    <!-- Header Page -->
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+        <div>
+            <h1 class="h3 mb-0 text-gray-800 fw-bold">
+                <i class="bi bi-grid-3x3-gap-fill text-primary me-2"></i>QUẢN LÝ DANH MỤC SẢN PHẨM
+            </h1>
+            <p class="text-muted small mb-0">Xem, thêm mới, sửa đổi hoặc xóa các danh mục sản phẩm thời trang trong hệ thống.</p>
+        </div>
+        <a asp-action="Create" class="btn btn-primary d-inline-flex align-items-center gap-2 px-3 py-2 shadow-sm rounded-3">
+            <i class="bi bi-plus-circle-fill"></i>
+            <span>Thêm danh mục mới</span>
+        </a>
+    </div>
+
+    <!-- Table Card -->
+    <div class="card shadow-sm border-0 rounded-3">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light py-3 border-bottom">
+                        <tr>
+                            <th class="px-4 py-3 text-uppercase font-weight-bold text-muted small" style="width: 8%;">ID</th>
+                            <th class="py-3 text-uppercase font-weight-bold text-muted small" style="width: 25%;">Tên Danh Mục</th>
+                            <th class="py-3 text-uppercase font-weight-bold text-muted small" style="width: 30%;">Mô Tả</th>
+                            <th class="py-3 text-center text-uppercase font-weight-bold text-muted small" style="width: 10%;">Thứ tự</th>
+                            <th class="py-3 text-center text-uppercase font-weight-bold text-muted small" style="width: 12%;">Trạng thái</th>
+                            <th class="py-3 text-center text-uppercase font-weight-bold text-muted small" style="width: 10%;">Số Sản Phẩm</th>
+                            <th class="px-4 py-3 text-end text-uppercase font-weight-bold text-muted small" style="width: 15%;">Thao Tác</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model != null && Model.Any())
+                        {
+                            foreach (var category in Model)
+                            {
+                                <tr>
+                                    <td class="px-4 text-muted fw-bold">#@category.Id</td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div class="avatar-icon bg-light-primary text-primary rounded-circle p-2 me-2 d-none d-sm-flex justify-content-center align-items-center" style="width: 36px; height: 36px;">
+                                                <i class="bi bi-tag-fill"></i>
+                                            </div>
+                                            <div>
+                                                <h6 class="mb-0 fw-semibold text-dark">@category.Name</h6>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="text-wrap">
+                                        <span class="text-secondary small">
+                                            @(string.IsNullOrEmpty(category.Description) ? "Không có mô tả" : category.Description)
+                                        </span>
+                                    </td>
+                                    <td class="text-center font-monospace fw-bold text-secondary">
+                                        @category.DisplayOrder
+                                    </td>
+                                    <td class="text-center">
+                                        @if (category.IsActive)
+                                        {
+                                            <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill px-2.5 py-1">
+                                                <i class="bi bi-check-circle-fill me-1"></i> Hoạt động
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-danger-subtle text-danger border border-danger-subtle rounded-pill px-2.5 py-1">
+                                                <i class="bi bi-x-circle-fill me-1"></i> Tạm khóa
+                                            </span>
+                                        }
+                                    </td>
+                                    <td class="text-center">
+                                        <span class="badge bg-secondary-subtle text-secondary border border-secondary-subtle rounded-pill px-2.5 py-1 fw-bold">
+                                            @(category.Products?.Count ?? 0) SP
+                                        </span>
+                                    </td>
+                                    <td class="px-4 text-end">
+                                        <div class="d-flex justify-content-end gap-2">
+                                            <a asp-action="Edit" asp-route-id="@category.Id" class="btn btn-sm btn-outline-warning d-inline-flex align-items-center gap-1 px-2.5 rounded-2">
+                                                <i class="bi bi-pencil-square"></i> Sửa
+                                            </a>
+                                            <a asp-action="Delete" asp-route-id="@category.Id" class="btn btn-sm btn-outline-danger d-inline-flex align-items-center gap-1 px-2.5 rounded-2"
+                                               onclick="return confirm('Bạn có chắc chắn muốn xóa danh mục &ldquo;@category.Name&rdquo; không? Tất cả sản phẩm thuộc danh mục này cũng sẽ mất liên kết.')">
+                                                <i class="bi bi-trash3-fill"></i> Xóa
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="7" class="text-center text-muted py-5">
+                                    <i class="bi bi-folder2-open display-4 text-secondary mb-3 d-block"></i>
+                                    <span>Không tìm thấy danh mục sản phẩm nào trong hệ thống.</span>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .bg-success-subtle { background-color: rgba(25, 135, 84, 0.1) !important; }
+    .bg-danger-subtle { background-color: rgba(220, 53, 69, 0.1) !important; }
+    .bg-secondary-subtle { background-color: rgba(108, 117, 125, 0.1) !important; }
+    .bg-light-primary { background-color: rgba(13, 110, 253, 0.1) !important; }
+</style>

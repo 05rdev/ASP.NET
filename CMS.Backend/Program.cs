@@ -49,6 +49,17 @@ builder.Services.AddCors(options =>
     });
 });
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowReactApp", policy =>
+    {
+        policy.WithOrigins("http://localhost:3000") // Cho phép ReactJS ở port 3000 gọi tới
+              .AllowAnyHeader()                     // Cho phép mọi loại Header (Content-Type, Authorization...)
+              .AllowAnyMethod()                     // Cho phép mọi phương thức HTTP (GET, POST, PUT, DELETE)
+              .AllowCredentials();                  // Hỗ trợ truyền Cookie/Session nếu cần sau này
+    });
+});
+
 // ==============================================================
 // 2. BUILD ỨNG DỤNG
 // ==============================================================
@@ -61,7 +72,7 @@ var app = builder.Build();
 app.UseSwagger();
 app.UseSwaggerUI(c =>
 {
-    c.SwaggerEndpoint("/swagger/v1/swagger.json", "ThaiCMS Web API v1");
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "VanDinhCMS Web API v1");
     c.RoutePrefix = "swagger"; // -- Đường dẫn truy cập mặc định sẽ là /swagger
 });
 
@@ -75,6 +86,10 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
+app.UseStaticFiles();
+
+// Kích hoạt CORS đúng vị trí này
+app.UseCors("AllowReactApp");
 
 // [VỊ TRÍ ĐẶT CORS]: Phải nằm ngay giữa UseRouting và app.UseAuthentication(); UseAuthorization();
 app.UseCors("AllowAll");

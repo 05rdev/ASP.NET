@@ -1,0 +1,210 @@
+@* Họ tên: Huỳnh Văn Định
+MSSV: 2123110052
+Version: 1.2 *@
+
+@model CMS.Data.Entities.Order
+@{
+    Layout = "_LayoutAdmin";
+    ViewData["Title"] = "Chi tiết đơn hàng #" + Model.Id;
+}
+
+<div class="container-fluid py-4" style="max-width: 1000px;">
+    <!-- Back button -->
+    <div class="mb-3">
+        <a asp-action="Index" class="text-decoration-none text-muted small d-inline-flex align-items-center gap-1">
+            <i class="bi bi-arrow-left"></i> Quay lại danh sách đơn hàng
+        </a>
+    </div>
+
+    <!-- Page Header -->
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+        <div>
+            <h1 class="h3 mb-1 text-gray-800 fw-bold">
+                <i class="bi bi-receipt text-primary me-2"></i>CHI TIẾT ĐƠN HÀNG #@Model.Id
+            </h1>
+            <p class="text-muted small mb-0">
+                Đặt ngày @Model.OrderDate.ToString("dd/MM/yyyy HH:mm") |
+                Status: 
+                @if (Model.Status == 0)
+                {
+                    <span class="badge bg-warning text-dark"><i class="bi bi-clock-history me-1"></i> Chờ duyệt</span>
+                }
+                else if (Model.Status == 1)
+                {
+                    <span class="badge bg-primary text-white"><i class="bi bi-truck me-1"></i> Đang giao</span>
+                }
+                else if (Model.Status == 2)
+                {
+                    <span class="badge bg-success text-white"><i class="bi bi-check-circle-fill me-1"></i> Đã xong</span>
+                }
+            </p>
+        </div>
+        <div>
+            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning text-dark fw-semibold d-inline-flex align-items-center gap-2 px-3 py-2 rounded-3 shadow-sm">
+                <i class="bi bi-pencil-square"></i>
+                <span>Cập nhật trạng thái</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Customer & Order details cards -->
+    <div class="row g-4 mb-4">
+        <!-- Customer Info Card -->
+        <div class="col-md-6">
+            <div class="card h-100 shadow-sm border-0 rounded-3">
+                <div class="card-header bg-white border-bottom py-3 px-4">
+                    <h5 class="card-title mb-0 fw-bold text-dark d-flex align-items-center">
+                        <i class="bi bi-person-fill text-primary me-2"></i> Thông tin khách hàng
+                    </h5>
+                </div>
+                <div class="card-body p-4">
+                    <table class="table table-borderless align-middle mb-0 small">
+                        <tbody>
+                            <tr>
+                                <td class="fw-semibold text-muted py-2" style="width: 35%;">Tên khách hàng:</td>
+                                <td class="text-dark fw-bold py-2">@(Model.Customer?.FullName ?? "Khách vãng lai")</td>
+                            </tr>
+                            <tr>
+                                <td class="fw-semibold text-muted py-2">Số điện thoại:</td>
+                                <td class="text-dark py-2">@(Model.Customer?.Phone ?? "---")</td>
+                            </tr>
+                            <tr>
+                                <td class="fw-semibold text-muted py-2">Email liên hệ:</td>
+                                <td class="text-dark py-2">@(Model.Customer?.Email ?? "---")</td>
+                            </tr>
+                            <tr>
+                                <td class="fw-semibold text-muted py-2">Địa chỉ giao:</td>
+                                <td class="text-dark py-2 text-wrap">@(Model.Customer?.Address ?? "---")</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Order Summary Card -->
+        <div class="col-md-6">
+            <div class="card h-100 shadow-sm border-0 rounded-3">
+                <div class="card-header bg-white border-bottom py-3 px-4">
+                    <h5 class="card-title mb-0 fw-bold text-dark d-flex align-items-center">
+                        <i class="bi bi-info-circle-fill text-primary me-2"></i> Tổng quan Đơn hàng
+                    </h5>
+                </div>
+                <div class="card-body p-4">
+                    <table class="table table-borderless align-middle mb-0 small">
+                        <tbody>
+                            <tr>
+                                <td class="fw-semibold text-muted py-2" style="width: 35%;">Mã đơn hàng:</td>
+                                <td class="text-dark font-monospace fw-bold py-2">#@Model.Id</td>
+                            </tr>
+                            <tr>
+                                <td class="fw-semibold text-muted py-2">Thời gian đặt:</td>
+                                <td class="text-dark py-2">@Model.OrderDate.ToString("dd/MM/yyyy HH:mm:ss")</td>
+                            </tr>
+                            <tr>
+                                <td class="fw-semibold text-muted py-2">Trạng thái:</td>
+                                <td class="py-2">
+                                    @if (Model.Status == 0)
+                                    {
+                                        <span class="badge bg-warning text-dark"><i class="bi bi-clock-history me-1"></i> Chờ xử lý</span>
+                                    }
+                                    else if (Model.Status == 1)
+                                    {
+                                        <span class="badge bg-primary text-white"><i class="bi bi-truck me-1"></i> Đang vận chuyển</span>
+                                    }
+                                    else if (Model.Status == 2)
+                                    {
+                                        <span class="badge bg-success text-white"><i class="bi bi-check-circle-fill me-1"></i> Giao thành công</span>
+                                    }
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="fw-semibold text-muted py-2">Ghi chú từ khách:</td>
+                                <td class="text-secondary py-2 text-wrap italic font-italic">
+                                    @(string.IsNullOrEmpty(Model.Notes) ? "Không có ghi chú" : Model.Notes)
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Product list card -->
+    <div class="card shadow-sm border-0 rounded-3">
+        <div class="card-header bg-white border-bottom py-3 px-4">
+            <h5 class="card-title mb-0 fw-bold text-dark d-flex align-items-center">
+                <i class="bi bi-bag-check-fill text-primary me-2"></i> Danh sách sản phẩm mua
+            </h5>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr class="text-center">
+                            <th style="width: 8%;" class="py-3">STT</th>
+                            <th style="width: 45%;" class="text-start py-3 ps-4">Sản Phẩm</th>
+                            <th style="width: 15%;" class="py-3">Giá Đơn Vị</th>
+                            <th style="width: 12%;" class="py-3">Số Lượng</th>
+                            <th style="width: 20%;" class="text-end py-3 pe-4">Thành Tiền</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.OrderDetails != null && Model.OrderDetails.Any())
+                        {
+                            int stt = 1;
+                            decimal tongTienDonHang = 0;
+
+                            foreach (var detail in Model.OrderDetails)
+                            {
+                                decimal thanhTien = detail.Quantity * detail.UnitPrice;
+                                tongTienDonHang += thanhTien;
+
+                                <tr class="text-center">
+                                    <td>@stt</td>
+                                    <td class="text-start ps-4">
+                                        <div class="d-flex align-items-center">
+                                            <div class="avatar-icon bg-light-secondary rounded p-2 me-3 d-none d-sm-flex justify-content-center align-items-center" style="width: 36px; height: 36px;">
+                                                <i class="bi bi-box-seam text-secondary"></i>
+                                            </div>
+                                            <div>
+                                                <h6 class="mb-0 fw-bold text-dark">@(detail.Product?.Name ?? "Sản phẩm không tồn tại hoặc đã xóa")</h6>
+                                                <span class="text-muted small" style="font-size: 0.75rem;">Mã SP: #@detail.ProductId</span>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="text-danger fw-semibold">
+                                        @detail.UnitPrice.ToString("#,##0") <span class="small">đ</span>
+                                    </td>
+                                    <td class="fw-bold">@detail.Quantity</td>
+                                    <td class="text-end pe-4 text-danger fw-bold">
+                                        @thanhTien.ToString("#,##0") <span class="small">đ</span>
+                                    </td>
+                                </tr>
+                                stt++;
+                            }
+
+                            <!-- Order total rows -->
+                            <tr class="table-light">
+                                <td colspan="4" class="text-end fw-bold py-3">Tổng giá trị đơn hàng:</td>
+                                <td class="text-end pe-4 fw-bold text-danger fs-5 py-3">
+                                    @tongTienDonHang.ToString("#,##0") <span class="small">đ</span>
+                                </td>
+                            </tr>
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="5" class="text-center text-muted py-5">
+                                    <i class="bi bi-cart-x display-4 text-secondary mb-3 d-block"></i>
+                                    <span>Đơn hàng này hiện chưa có sản phẩm nào được liên kết.</span>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

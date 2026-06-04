@@ -1,0 +1,99 @@
+@* Họ tên: Huỳnh Văn Định
+MSSV: 2123110052
+Version: 1.2 *@
+
+@model CMS.Data.Entities.Order
+@{
+    Layout = "_LayoutAdmin";
+    ViewData["Title"] = "Tạo đơn hàng mới";
+}
+
+<div class="container py-4" style="max-width: 800px;">
+    <!-- Back button -->
+    <div class="mb-3">
+        <a asp-action="Index" class="text-decoration-none text-muted small d-inline-flex align-items-center gap-1">
+            <i class="bi bi-arrow-left"></i> Quay lại danh sách đơn hàng
+        </a>
+    </div>
+
+    <!-- Page Header -->
+    <div class="mb-4">
+        <h1 class="h3 mb-1 text-gray-800 fw-bold text-primary">
+            <i class="bi bi-plus-circle-fill me-2"></i>TẠO ĐƠN HÀNG MỚI THỦ CÔNG
+        </h1>
+        <p class="text-muted small">Khởi tạo một hóa đơn mới cho khách hàng hiện tại trong hệ thống.</p>
+    </div>
+
+    <!-- Form Card -->
+    <div class="card shadow-sm border-0 rounded-3">
+        <div class="card-body p-4">
+            <form asp-action="Create" method="post" class="needs-validation" novalidate>
+                <!-- Validation Summary -->
+                @if (!ViewData.ModelState.IsValid)
+                {
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                        <span>Vui lòng kiểm tra lại thông tin nhập vào!</span>
+                        <div asp-validation-summary="All" class="small mt-2 text-danger"></div>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                }
+
+                <!-- Chọn khách hàng -->
+                <div class="mb-4">
+                    <label asp-for="CustomerId" class="form-label fw-semibold text-dark">Khách hàng <span class="text-danger">*</span></label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-light text-muted"><i class="bi bi-person"></i></span>
+                        <select asp-for="CustomerId" class="form-select" asp-items="ViewBag.CustomerId" required>
+                            <option value="">-- Chọn khách hàng nhận hóa đơn --</option>
+                        </select>
+                    </div>
+                    <span asp-validation-for="CustomerId" class="text-danger small mt-1 d-block"></span>
+                </div>
+
+                <div class="row">
+                    <!-- Trạng thái ban đầu -->
+                    <div class="col-md-6 mb-4">
+                        <label asp-for="Status" class="form-label fw-semibold text-dark">Trạng thái đơn hàng</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light text-muted"><i class="bi bi-info-circle"></i></span>
+                            <select asp-for="Status" class="form-select">
+                                <option value="0" selected>Chờ duyệt</option>
+                                <option value="1">Đang giao</option>
+                                <option value="2">Đã xong</option>
+                            </select>
+                        </div>
+                        <span asp-validation-for="Status" class="text-danger small mt-1 d-block"></span>
+                    </div>
+
+                    <!-- Ngày tạo hóa đơn -->
+                    <div class="col-md-6 mb-4">
+                        <label class="form-label fw-semibold text-dark">Ngày đặt hàng</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light text-muted"><i class="bi bi-calendar"></i></span>
+                            <input class="form-control" type="text" value="@DateTime.Now.ToString("dd/MM/yyyy HH:mm")" disabled />
+                        </div>
+                        <p class="text-muted small mt-1 mb-0" style="font-size: 0.8rem;">Hệ thống tự động ghi nhận thời gian thực khi nhấn lưu.</p>
+                    </div>
+                </div>
+
+                <!-- Ghi chú đơn hàng -->
+                <div class="mb-4">
+                    <label asp-for="Notes" class="form-label fw-semibold text-dark">Ghi chú / Địa chỉ phụ</label>
+                    <textarea asp-for="Notes" class="form-control" rows="3" placeholder="Nhập thêm ghi chú đơn hàng hoặc thông tin yêu cầu của khách..."></textarea>
+                    <span asp-validation-for="Notes" class="text-danger small mt-1 d-block"></span>
+                </div>
+
+                <hr class="my-4 text-secondary opacity-25" />
+
+                <!-- Action Buttons -->
+                <div class="d-flex justify-content-end gap-2">
+                    <a asp-action="Index" class="btn btn-light border px-4 py-2 rounded-2">Hủy bỏ</a>
+                    <button type="submit" class="btn btn-primary px-4 py-2 rounded-2">
+                        <i class="bi bi-save me-1"></i> Lưu và Tạo Đơn
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
