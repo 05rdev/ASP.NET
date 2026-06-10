@@ -2,10 +2,12 @@ import React, { useState } from 'react';
 import CategoryProductList from './components/CategoryProductList';
 import ProductList from './components/ProductList';
 import PostList from './components/PostList';
-import './App.css'; // File chứa các style tùy biến riêng của dự án
+import BlogCategoryList from './components/BlogCategoryList';
+import './App.css';
 
 function App() {
   const [selectedCategoryId, setSelectedCategoryId] = useState(null);
+  const [selectedBlogCategoryId, setSelectedBlogCategoryId] = useState(null);
 
   return (
     <div className="container mt-5">
@@ -23,9 +25,13 @@ function App() {
             selectedCategoryId={selectedCategoryId}
             onSelectCategory={setSelectedCategoryId}
           />
+          <BlogCategoryList
+            selectedBlogCategoryId={selectedBlogCategoryId}
+            onSelectBlogCategory={setSelectedBlogCategoryId}
+          />
         </div>
 
-        {/* Cột bên phải: Danh sách sản phẩm thời trang tự làm */}
+        {/* Cột bên phải: Danh sách sản phẩm */}
         <div className="col-md-9 mb-4">
           <h4 className="mb-4 text-uppercase text-secondary font-weight-bold" style={{ letterSpacing: '0.5px' }}>
             {selectedCategoryId ? 'Sản phẩm theo danh mục' : 'Bộ sưu tập mới nhất'}
@@ -37,7 +43,7 @@ function App() {
       {/* KHU VỰC 2: BLOG & BLOG CATEGORIES (Tin tức thời trang công sở, dạ hội) */}
       <div className="row mt-5 pt-4 border-top">
         <div className="col-12">
-          <PostList />
+          <PostList selectedBlogCategoryId={selectedBlogCategoryId} />
         </div>
       </div>
     </div>

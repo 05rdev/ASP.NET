@@ -1,15 +1,22 @@
 import axiosClient from '../api/axiosClient';
 
 const blogService = {
-    // Hàm gọi API lấy danh mục các chủ đề bài viết
-    getBlogCategories: () => {
-        const url = '/Categories'; // Khớp với Route quản lý chuyên mục tin tức ở Backend
+    // 1. Hàm lấy danh sách toàn bộ bài viết (Đã làm ở phần thực hành chung)
+    getAllPosts: () => {
+        const url = '/Posts'; 
         return axiosClient.get(url);
     },
 
-    // Hàm gọi API lấy toàn bộ các bài viết (Mẹo phối đồ, tin tức thời trang)
-    getAllPosts: () => {
-        const url = '/Posts'; // Khớp với Route quản lý bài viết ở Backend
+    // 2. BÀI TẬP TỰ LÀM: Thêm hàm lấy danh sách Chuyên mục tin tức (Category)
+    getBlogCategories: () => {
+        const url = '/Categories'; // Cần khớp chính xác với [Route("api/Categories")] trong CategoriesController ở Backend
+        return axiosClient.get(url);
+    },
+
+    // 3. Lấy danh sách bài viết theo chuyên mục (Category)
+    // Gọi đến endpoint: GET /api/Posts/category/{categoryId} trong PostsController
+    getPostsByCategory: (categoryId) => {
+        const url = `/Posts/category/${categoryId}`;
         return axiosClient.get(url);
     }
 };
