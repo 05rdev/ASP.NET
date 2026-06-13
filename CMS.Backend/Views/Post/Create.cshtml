@@ -1,4 +1,4 @@
-﻿@* Họ tên: Huỳnh Văn Định
+@* Họ tên: Huỳnh Văn Định
 MSSV: 2123110052
 Version:1.1 *@
 
@@ -18,6 +18,46 @@ Version:1.1 *@
             .catch(error => {
                 console.error(error);
             });
+
+        // 3. Xử lý Preview ảnh
+        const uploadImage = document.getElementById('uploadImage');
+        const imageUrlInput = document.getElementById('ImageUrl');
+        const previewContainer = document.getElementById('imagePreviewContainer');
+        const imagePreview = document.getElementById('imagePreview');
+        const previewLabel = document.getElementById('previewLabel');
+
+        function showPreview(src, labelText) {
+            imagePreview.src = src;
+            previewLabel.textContent = labelText;
+            previewContainer.classList.remove('d-none');
+        }
+
+        // Preview từ file tải lên
+        uploadImage.addEventListener('change', function (event) {
+            const file = event.target.files[0];
+            if (file) {
+                // Xóa giá trị input Link ảnh để tránh nhập nhằng
+                imageUrlInput.value = "";
+                
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    showPreview(e.target.result, "Ảnh tải lên:");
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Preview từ Link URL nhập vào
+        imageUrlInput.addEventListener('input', function () {
+            const url = this.value.trim();
+            if (url) {
+                // Xóa file đã chọn để tránh nhập nhằng
+                uploadImage.value = "";
+                showPreview(url, "Ảnh từ link (URL):");
+            } else {
+                previewContainer.classList.add('d-none');
+            }
+        });
     </script>
 }
 
@@ -27,32 +67,44 @@ Version:1.1 *@
             <h4 class="mb-0"><i class="bi bi-file-earmark-plus"></i> THÊM BÀI VIẾT MỚI</h4>
         </div>
         <div class="card-body">
-            <form asp-action="Create" method="post">
+            <form asp-action="Create" method="post" enctype="multipart/form-data">
                 <div class="row">
                     <div class="col-md-8">
                         <div class="mb-3">
                             <label class="form-label fw-bold">Tiêu đề bài viết:</label>
-                            <input asp-for="Title" class="form-control" placeholder="Nhập tiêu đề..." />
+                            <input asp-for="Title" class="form-control" placeholder="Nhập tiêu đề..." required />
                         </div>
 
                        <div class="mb-3">
                             <label class="form-label fw-bold">Nội dung chi tiết:</label>
                             <textarea asp-for="Content" class="form-control" rows="10"></textarea>
-                        </div
+                        </div>
 
                     </div>
 
                     <div class="col-md-4">
                         <div class="mb-3">
                             <label class="form-label fw-bold">Chuyên mục:</label>
-                            <select asp-for="CategoryId" class="form-select" asp-items="ViewBag.CategoryList">
+                            <select asp-for="CategoryId" class="form-select" asp-items="ViewBag.CategoryList" required>
                                 <option value="">-- Chọn danh mục --</option>
                             </select>
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label fw-bold">Link ảnh đại diện (URL):</label>
-                            <input asp-for="ImageUrl" class="form-control" placeholder="https://..." />
+                            <label class="form-label fw-bold">Hình ảnh đại diện:</label>
+                            <div class="mb-2">
+                                <label class="form-label small text-muted">Tải ảnh lên từ thiết bị:</label>
+                                <input type="file" name="uploadImage" id="uploadImage" class="form-control" accept="image/*" />
+                            </div>
+                            <div>
+                                <label class="form-label small text-muted">Hoặc nhập link ảnh (URL):</label>
+                                <input asp-for="ImageUrl" id="ImageUrl" class="form-control" placeholder="https://..." />
+                            </div>
+
+                            <div class="mt-2 text-center border rounded p-2 bg-light d-none" id="imagePreviewContainer">
+                                <span class="d-block text-muted small mb-1" id="previewLabel">Xem trước ảnh:</span>
+                                <img id="imagePreview" src="" class="img-fluid rounded shadow-sm" style="max-height: 150px; object-fit: contain;" />
+                            </div>
                         </div>
 
                         <div class="mb-3">

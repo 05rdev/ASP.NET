@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Họ tên: Huỳnh Văn Định
  * MSSV: 2123110052
  * Version:1.0
@@ -63,6 +63,47 @@ namespace CMS.Backend.Controllers
 
             // 3. Truyền dữ liệu sang View
             return View(post);
+        }
+
+        // GET: Hiển thị form tạo bài viết mới
+        [HttpGet]
+        public IActionResult Create()
+        {
+            // Chuẩn bị danh sách danh mục để người dùng chọn chuyên mục
+            ViewBag.CategoryList = new SelectList(_context.Categories, "Id", "Name");
+            return View();
+        }
+
+        // POST: Thực hiện lưu bài viết mới vào database
+        [HttpPost]
+        public IActionResult Create(Post model, IFormFile uploadImage)
+        {
+            if (uploadImage != null && uploadImage.Length > 0)
+            {
+                // Quy trình upload ảnh từ thiết bị
+                string folder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads");
+                if (!Directory.Exists(folder)) Directory.CreateDirectory(folder);
+
+                string fileName = Guid.NewGuid().ToString() + Path.GetExtension(uploadImage.FileName);
+                string filePath = Path.Combine(folder, fileName);
+
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    uploadImage.CopyTo(stream);
+                }
+
+                // Cập nhật đường dẫn ảnh mới vào model
+                model.ImageUrl = "/uploads/" + fileName;
+            }
+
+            // Thêm bài viết mới vào DbContext
+            _context.Posts.Add(model);
+
+            // Lưu thay đổi xuống SQL Server
+            _context.SaveChanges();
+
+            // Chuyển hướng về danh sách bài viết
+            return RedirectToAction("Index");
         }
 
         // GET: Hiển thị form kèm dữ liệu cũ

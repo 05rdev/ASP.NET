@@ -1,27 +1,395 @@
-﻿@* Họ tên: Huỳnh Văn Định
+@* Họ tên: Huỳnh Văn Định
 MSSV: 2123110052
-Version:1.1 *@
-@model IEnumerable<CMS.Data.Entities.Post>
+Version:2.0 - Dashboard *@
+@model CMS.Backend.Models.DashboardViewModel
+@{
+    ViewData["Title"] = "Bảng điều khiển";
+    Layout = "_LayoutAdmin";
+}
 
-<div class="container mt-5">
-    <h2 class="text-center mb-4 text-danger">TIN TỨC MỚI NHẤT</h2>
-    <div class="row">
-        @foreach (var item in Model)
-        {
-            <div class="col-md-4">
-                <div class="card shadow-sm h-100">
-                    <img src="@item.ImageUrl" class="card-img-top" alt="Thumbnail">
-                    <div class="card-body">
-                        <span class="badge bg-primary mb-2">@item.Category.Name</span>
-                        <h5 class="card-title">@item.Title</h5>
-                        <p class="card-text text-truncate">@item.Content</p>
-                        <a href="/Post/Details/@item.Id" class="btn btn-outline-danger btn-sm">Đọc tiếp</a>
-                    </div>
-                    <div class="card-footer text-muted small">
-                        Ngày đăng: @item.CreatedDate.ToString("dd/MM/yyyy")
-                    </div>
+<style>
+    .dashboard-header { margin-bottom: 32px; }
+    .dashboard-header h1 { font-size: 1.75rem; font-weight: 700; color: #1e293b; margin-bottom: 4px; }
+    .dashboard-header p { color: #64748b; font-size: 0.95rem; }
+
+    /* Stat Cards */
+    .stat-card {
+        background: #fff; border-radius: 16px; padding: 24px; position: relative; overflow: hidden;
+        box-shadow: 0 4px 24px rgba(0,0,0,0.04); transition: transform 0.25s ease, box-shadow 0.25s ease;
+        border: 1px solid rgba(0,0,0,0.04);
+    }
+    .stat-card:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(0,0,0,0.08); }
+    .stat-card .stat-icon {
+        width: 52px; height: 52px; border-radius: 14px; display: flex; align-items: center;
+        justify-content: center; font-size: 1.4rem; margin-bottom: 16px;
+    }
+    .stat-card .stat-value { font-size: 1.85rem; font-weight: 800; color: #1e293b; line-height: 1; }
+    .stat-card .stat-label { font-size: 0.85rem; color: #94a3b8; font-weight: 500; margin-top: 6px; }
+    .stat-card::after {
+        content: ''; position: absolute; top: -30px; right: -30px; width: 100px; height: 100px;
+        border-radius: 50%; opacity: 0.06;
+    }
+
+    .stat-icon.blue { background: linear-gradient(135deg, #dbeafe, #bfdbfe); color: #2563eb; }
+    .stat-card.blue::after { background: #2563eb; }
+    .stat-icon.green { background: linear-gradient(135deg, #dcfce7, #bbf7d0); color: #16a34a; }
+    .stat-card.green::after { background: #16a34a; }
+    .stat-icon.purple { background: linear-gradient(135deg, #ede9fe, #ddd6fe); color: #7c3aed; }
+    .stat-card.purple::after { background: #7c3aed; }
+    .stat-icon.amber { background: linear-gradient(135deg, #fef3c7, #fde68a); color: #d97706; }
+    .stat-card.amber::after { background: #d97706; }
+    .stat-icon.rose { background: linear-gradient(135deg, #ffe4e6, #fecdd3); color: #e11d48; }
+    .stat-card.rose::after { background: #e11d48; }
+    .stat-icon.cyan { background: linear-gradient(135deg, #cffafe, #a5f3fc); color: #0891b2; }
+    .stat-card.cyan::after { background: #0891b2; }
+
+    /* Revenue Card */
+    .revenue-card {
+        background: linear-gradient(135deg, #1e293b 0%, #334155 50%, #1e293b 100%);
+        border-radius: 20px; padding: 32px; color: #fff; position: relative; overflow: hidden;
+    }
+    .revenue-card::before {
+        content: ''; position: absolute; top: -50%; right: -20%; width: 300px; height: 300px;
+        background: radial-gradient(circle, rgba(59,130,246,0.15) 0%, transparent 70%); border-radius: 50%;
+    }
+    .revenue-card .revenue-label { font-size: 0.9rem; color: #94a3b8; font-weight: 500; text-transform: uppercase; letter-spacing: 1px; }
+    .revenue-card .revenue-value { font-size: 2.5rem; font-weight: 800; margin: 8px 0; }
+    .revenue-card .revenue-sub { font-size: 0.85rem; color: #64748b; }
+
+    /* Section Title */
+    .section-title {
+        font-size: 1.1rem; font-weight: 700; color: #1e293b; margin-bottom: 20px;
+        display: flex; align-items: center; gap: 8px;
+    }
+    .section-title i { color: #3b82f6; }
+
+    /* Panel Card */
+    .panel-card {
+        background: #fff; border-radius: 16px; padding: 24px;
+        box-shadow: 0 4px 24px rgba(0,0,0,0.04); border: 1px solid rgba(0,0,0,0.04);
+    }
+
+    /* Order Status */
+    .order-status-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+    .order-status-item {
+        text-align: center; padding: 16px 12px; border-radius: 12px; background: #f8fafc;
+        transition: transform 0.2s ease;
+    }
+    .order-status-item:hover { transform: scale(1.03); }
+    .order-status-item .status-count { font-size: 1.6rem; font-weight: 800; }
+    .order-status-item .status-label { font-size: 0.78rem; color: #64748b; font-weight: 500; margin-top: 4px; }
+    .status-pending .status-count { color: #f59e0b; }
+    .status-shipping .status-count { color: #3b82f6; }
+    .status-done .status-count { color: #10b981; }
+
+    /* Chart Container */
+    .chart-container { position: relative; height: 220px; display: flex; align-items: flex-end; gap: 8px; padding-top: 20px; }
+    .chart-bar-wrapper { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 6px; }
+    .chart-bar {
+        width: 100%; min-height: 8px; border-radius: 8px 8px 4px 4px;
+        background: linear-gradient(180deg, #3b82f6, #2563eb); transition: height 0.6s ease;
+        position: relative; cursor: pointer;
+    }
+    .chart-bar:hover { background: linear-gradient(180deg, #60a5fa, #3b82f6); }
+    .chart-bar-label { font-size: 0.72rem; color: #94a3b8; font-weight: 500; }
+    .chart-bar-value {
+        font-size: 0.7rem; font-weight: 700; color: #1e293b; position: absolute; top: -18px;
+        left: 50%; transform: translateX(-50%); white-space: nowrap;
+    }
+
+    /* Table styling */
+    .dashboard-table { width: 100%; border-collapse: separate; border-spacing: 0; }
+    .dashboard-table thead th {
+        font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.5px; color: #94a3b8;
+        font-weight: 600; padding: 10px 12px; border-bottom: 2px solid #f1f5f9; background: transparent;
+    }
+    .dashboard-table tbody td {
+        padding: 12px; font-size: 0.88rem; color: #334155; border-bottom: 1px solid #f1f5f9;
+        vertical-align: middle;
+    }
+    .dashboard-table tbody tr { transition: background 0.15s ease; }
+    .dashboard-table tbody tr:hover { background: #f8fafc; }
+
+    /* Badge */
+    .status-badge {
+        display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 0.75rem;
+        font-weight: 600; letter-spacing: 0.3px;
+    }
+    .badge-pending { background: #fef3c7; color: #92400e; }
+    .badge-shipping { background: #dbeafe; color: #1e40af; }
+    .badge-done { background: #dcfce7; color: #166534; }
+
+    /* Top Product Item */
+    .top-product-item {
+        display: flex; align-items: center; gap: 14px; padding: 12px 0;
+        border-bottom: 1px solid #f1f5f9; transition: background 0.15s;
+    }
+    .top-product-item:last-child { border-bottom: none; }
+    .top-product-item:hover { background: #f8fafc; margin: 0 -12px; padding: 12px; border-radius: 10px; }
+    .top-product-rank {
+        width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center;
+        justify-content: center; font-size: 0.78rem; font-weight: 800; flex-shrink: 0;
+    }
+    .rank-1 { background: linear-gradient(135deg, #fbbf24, #f59e0b); color: #fff; }
+    .rank-2 { background: linear-gradient(135deg, #9ca3af, #6b7280); color: #fff; }
+    .rank-3 { background: linear-gradient(135deg, #d97706, #b45309); color: #fff; }
+    .rank-default { background: #f1f5f9; color: #64748b; }
+    .top-product-img {
+        width: 44px; height: 44px; border-radius: 10px; object-fit: cover; flex-shrink: 0;
+        background: #f1f5f9;
+    }
+    .top-product-info { flex: 1; min-width: 0; }
+    .top-product-name { font-weight: 600; font-size: 0.88rem; color: #1e293b; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .top-product-sold { font-size: 0.78rem; color: #94a3b8; }
+    .top-product-revenue { font-weight: 700; font-size: 0.9rem; color: #10b981; white-space: nowrap; }
+
+    /* Animation */
+    .fade-in { animation: fadeInUp 0.5s ease forwards; opacity: 0; }
+    @@keyframes fadeInUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+    .delay-1 { animation-delay: 0.05s; } .delay-2 { animation-delay: 0.1s; }
+    .delay-3 { animation-delay: 0.15s; } .delay-4 { animation-delay: 0.2s; }
+    .delay-5 { animation-delay: 0.25s; } .delay-6 { animation-delay: 0.3s; }
+</style>
+
+<!-- Header -->
+<div class="dashboard-header fade-in">
+    <h1><i class="bi bi-speedometer2 me-2" style="color:#3b82f6"></i>Bảng điều khiển</h1>
+    <p>Tổng quan hệ thống CMS — Cập nhật lúc @DateTime.Now.ToString("HH:mm, dd/MM/yyyy")</p>
+</div>
+
+<!-- Revenue Banner -->
+<div class="revenue-card mb-4 fade-in delay-1">
+    <div class="row align-items-center">
+        <div class="col-md-6">
+            <div class="revenue-label">Tổng doanh thu (đơn hoàn thành)</div>
+            <div class="revenue-value">@Model.TotalRevenue.ToString("#,##0") ₫</div>
+            <div class="revenue-sub">
+                <i class="bi bi-check-circle-fill text-success me-1"></i>
+                @Model.OrdersCompleted đơn hàng đã hoàn thành
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="order-status-grid">
+                <div class="order-status-item status-pending">
+                    <div class="status-count">@Model.OrdersPending</div>
+                    <div class="status-label"><i class="bi bi-clock"></i> Chờ duyệt</div>
+                </div>
+                <div class="order-status-item status-shipping">
+                    <div class="status-count">@Model.OrdersShipping</div>
+                    <div class="status-label"><i class="bi bi-truck"></i> Đang giao</div>
+                </div>
+                <div class="order-status-item status-done">
+                    <div class="status-count">@Model.OrdersCompleted</div>
+                    <div class="status-label"><i class="bi bi-check-lg"></i> Hoàn thành</div>
                 </div>
             </div>
-        }
+        </div>
+    </div>
+</div>
+
+<!-- Stat Cards Row -->
+<div class="row g-3 mb-4">
+    <div class="col-6 col-md-4 col-lg-2 fade-in delay-1">
+        <div class="stat-card blue">
+            <div class="stat-icon blue"><i class="bi bi-box-seam-fill"></i></div>
+            <div class="stat-value">@Model.TotalProducts</div>
+            <div class="stat-label">Sản phẩm</div>
+        </div>
+    </div>
+    <div class="col-6 col-md-4 col-lg-2 fade-in delay-2">
+        <div class="stat-card green">
+            <div class="stat-icon green"><i class="bi bi-receipt-cutoff"></i></div>
+            <div class="stat-value">@Model.TotalOrders</div>
+            <div class="stat-label">Đơn hàng</div>
+        </div>
+    </div>
+    <div class="col-6 col-md-4 col-lg-2 fade-in delay-3">
+        <div class="stat-card purple">
+            <div class="stat-icon purple"><i class="bi bi-people-fill"></i></div>
+            <div class="stat-value">@Model.TotalCustomers</div>
+            <div class="stat-label">Khách hàng</div>
+        </div>
+    </div>
+    <div class="col-6 col-md-4 col-lg-2 fade-in delay-4">
+        <div class="stat-card amber">
+            <div class="stat-icon amber"><i class="bi bi-file-earmark-post-fill"></i></div>
+            <div class="stat-value">@Model.TotalPosts</div>
+            <div class="stat-label">Bài viết</div>
+        </div>
+    </div>
+    <div class="col-6 col-md-4 col-lg-2 fade-in delay-5">
+        <div class="stat-card rose">
+            <div class="stat-icon rose"><i class="bi bi-tags-fill"></i></div>
+            <div class="stat-value">@Model.TotalCategories</div>
+            <div class="stat-label">Danh mục</div>
+        </div>
+    </div>
+    <div class="col-6 col-md-4 col-lg-2 fade-in delay-6">
+        <div class="stat-card cyan">
+            <div class="stat-icon cyan"><i class="bi bi-shield-lock-fill"></i></div>
+            <div class="stat-value">@Model.TotalUsers</div>
+            <div class="stat-label">Thành viên</div>
+        </div>
+    </div>
+</div>
+
+<!-- Charts & Top Products Row -->
+<div class="row g-4 mb-4">
+    <!-- Revenue Chart -->
+    <div class="col-lg-7 fade-in delay-3">
+        <div class="panel-card h-100">
+            <div class="section-title"><i class="bi bi-bar-chart-fill"></i> Doanh thu 7 ngày gần nhất</div>
+            @{
+                var maxRev = Model.DailyRevenues.Any() ? Model.DailyRevenues.Max(r => r.Revenue) : 1;
+                if (maxRev == 0) maxRev = 1;
+            }
+            <div class="chart-container">
+                @foreach (var day in Model.DailyRevenues)
+                {
+                    var heightPct = (double)day.Revenue / (double)maxRev * 180;
+                    <div class="chart-bar-wrapper">
+                        <div class="chart-bar" style="height: @(Math.Max(8, heightPct))px;">
+                            <div class="chart-bar-value">@day.Revenue.ToString("#,##0")</div>
+                        </div>
+                        <div class="chart-bar-label">@day.Date</div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- Top Products -->
+    <div class="col-lg-5 fade-in delay-4">
+        <div class="panel-card h-100">
+            <div class="section-title"><i class="bi bi-trophy-fill"></i> Sản phẩm bán chạy</div>
+            @if (Model.TopProducts.Any())
+            {
+                var rank = 0;
+                foreach (var p in Model.TopProducts)
+                {
+                    rank++;
+                    var rankClass = rank switch { 1 => "rank-1", 2 => "rank-2", 3 => "rank-3", _ => "rank-default" };
+                    <div class="top-product-item">
+                        <div class="top-product-rank @rankClass">@rank</div>
+                        @if (!string.IsNullOrEmpty(p.ImageUrl))
+                        {
+                            <img src="@p.ImageUrl" alt="@p.ProductName" class="top-product-img" />
+                        }
+                        else
+                        {
+                            <div class="top-product-img d-flex align-items-center justify-content-center">
+                                <i class="bi bi-image text-muted"></i>
+                            </div>
+                        }
+                        <div class="top-product-info">
+                            <div class="top-product-name" title="@p.ProductName">@p.ProductName</div>
+                            <div class="top-product-sold">Đã bán @p.TotalSold sản phẩm</div>
+                        </div>
+                        <div class="top-product-revenue">@p.TotalRevenue.ToString("#,##0")₫</div>
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="text-center text-muted py-4">
+                    <i class="bi bi-inbox" style="font-size:2rem"></i>
+                    <p class="mt-2">Chưa có dữ liệu bán hàng</p>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<!-- Latest Orders & Posts -->
+<div class="row g-4 mb-4">
+    <!-- Latest Orders -->
+    <div class="col-lg-7 fade-in delay-5">
+        <div class="panel-card">
+            <div class="section-title"><i class="bi bi-receipt"></i> Đơn hàng mới nhất</div>
+            <div class="table-responsive">
+                <table class="dashboard-table">
+                    <thead>
+                        <tr>
+                            <th>Mã</th>
+                            <th>Khách hàng</th>
+                            <th>Ngày đặt</th>
+                            <th>Tổng tiền</th>
+                            <th>Trạng thái</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.LatestOrders.Any())
+                        {
+                            foreach (var order in Model.LatestOrders)
+                            {
+                                var total = order.OrderDetails?.Sum(od => od.Quantity * od.UnitPrice) ?? 0;
+                                var statusText = order.Status switch { 0 => "Chờ duyệt", 1 => "Đang giao", 2 => "Hoàn thành", _ => "Không rõ" };
+                                var badgeClass = order.Status switch { 0 => "badge-pending", 1 => "badge-shipping", 2 => "badge-done", _ => "badge-pending" };
+                                <tr>
+                                    <td><strong>#@order.Id</strong></td>
+                                    <td>@(order.Customer?.FullName ?? "N/A")</td>
+                                    <td>@order.OrderDate.ToString("dd/MM/yyyy")</td>
+                                    <td><strong>@total.ToString("#,##0")₫</strong></td>
+                                    <td><span class="status-badge @badgeClass">@statusText</span></td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr><td colspan="5" class="text-center text-muted py-3">Chưa có đơn hàng</td></tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            <div class="mt-3 text-end">
+                <a asp-controller="Order" asp-action="Index" class="btn btn-sm btn-outline-primary">
+                    Xem tất cả <i class="bi bi-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Latest Posts -->
+    <div class="col-lg-5 fade-in delay-6">
+        <div class="panel-card">
+            <div class="section-title"><i class="bi bi-newspaper"></i> Bài viết mới nhất</div>
+            @if (Model.LatestPosts.Any())
+            {
+                foreach (var post in Model.LatestPosts)
+                {
+                    <div class="d-flex align-items-center gap-3 py-2 border-bottom" style="border-color:#f1f5f9!important">
+                        @if (!string.IsNullOrEmpty(post.ImageUrl))
+                        {
+                            <img src="@post.ImageUrl" alt="" style="width:48px;height:48px;border-radius:10px;object-fit:cover;flex-shrink:0" />
+                        }
+                        else
+                        {
+                            <div style="width:48px;height:48px;border-radius:10px;background:#f1f5f9" class="d-flex align-items-center justify-content-center flex-shrink-0">
+                                <i class="bi bi-file-text text-muted"></i>
+                            </div>
+                        }
+                        <div style="min-width:0;flex:1">
+                            <div style="font-weight:600;font-size:0.88rem;color:#1e293b;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="@post.Title">@post.Title</div>
+                            <div style="font-size:0.78rem;color:#94a3b8">
+                                <span class="badge" style="background:#ede9fe;color:#7c3aed;font-size:0.7rem">@(post.Category?.Name ?? "N/A")</span>
+                                · @post.CreatedDate.ToString("dd/MM/yyyy")
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="text-center text-muted py-4">
+                    <i class="bi bi-inbox" style="font-size:2rem"></i>
+                    <p class="mt-2">Chưa có bài viết</p>
+                </div>
+            }
+            <div class="mt-3 text-end">
+                <a asp-controller="Post" asp-action="Index" class="btn btn-sm btn-outline-primary">
+                    Xem tất cả <i class="bi bi-arrow-right"></i>
+                </a>
+            </div>
+        </div>
     </div>
 </div>

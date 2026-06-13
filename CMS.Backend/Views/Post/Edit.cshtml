@@ -17,7 +17,6 @@ Version:1.1 *@
         <div class="card-body p-4">
             <form asp-action="Edit" method="post" enctype="multipart/form-data">
                 <input type="hidden" asp-for="Id" />
-                <input type="hidden" asp-for="ImageUrl" />
 
                 <div class="row">
                     <!-- Left column -->
@@ -44,7 +43,14 @@ Version:1.1 *@
 
                         <div class="mb-3">
                             <label class="form-label fw-bold text-secondary">Hình ảnh đại diện:</label>
-                            <input type="file" name="uploadImage" id="uploadImage" class="form-control border-2 rounded-2" accept="image/*" />
+                            <div class="mb-2">
+                                <label class="form-label small text-muted">Tải ảnh mới từ thiết bị:</label>
+                                <input type="file" name="uploadImage" id="uploadImage" class="form-control border-2 rounded-2" accept="image/*" />
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label small text-muted">Hoặc link ảnh hiện tại / mới (URL):</label>
+                                <input asp-for="ImageUrl" id="ImageUrl" class="form-control border-2 rounded-2" placeholder="https://..." />
+                            </div>
 
                             <!-- Preview Image Section -->
                             <div class="mt-2 text-center border rounded-2 p-2 bg-light" id="imagePreviewContainer">
@@ -91,17 +97,45 @@ Version:1.1 *@
                 console.error(error);
             });
 
-        // 2. Preview selected image before uploading
-        document.getElementById('uploadImage').addEventListener('change', function (event) {
+        // 2. Xử lý Preview ảnh
+        const uploadImage = document.getElementById('uploadImage');
+        const imageUrlInput = document.getElementById('ImageUrl');
+        const previewContainer = document.getElementById('imagePreviewContainer');
+        const imagePreview = document.getElementById('imagePreview');
+        const previewLabel = document.getElementById('previewLabel');
+
+        function showPreview(src, labelText) {
+            imagePreview.src = src;
+            previewLabel.textContent = labelText;
+            previewContainer.classList.remove('d-none');
+        }
+
+        // Preview từ file tải lên
+        uploadImage.addEventListener('change', function (event) {
             const file = event.target.files[0];
             if (file) {
+                // Xóa giá trị input Link ảnh để tránh nhập nhằng
+                imageUrlInput.value = "";
+                
                 const reader = new FileReader();
                 reader.onload = function (e) {
-                    const preview = document.getElementById('imagePreview');
-                    preview.src = e.target.result;
-                    document.getElementById('previewLabel').textContent = "Ảnh mới chọn:";
+                    showPreview(e.target.result, "Ảnh mới chọn từ máy:");
                 };
                 reader.readAsDataURL(file);
+            }
+        });
+
+        // Preview từ Link URL nhập vào
+        imageUrlInput.addEventListener('input', function () {
+            const url = this.value.trim();
+            if (url) {
+                // Xóa file đã chọn để tránh nhập nhằng
+                uploadImage.value = "";
+                showPreview(url, "Ảnh từ link mới (URL):");
+            } else {
+                // Nếu xóa trắng link và không chọn file, có thể ẩn preview hoặc quay về trạng thái ban đầu
+                imagePreview.src = "/images/no-image.png";
+                previewLabel.textContent = "Không có ảnh:";
             }
         });
     </script>

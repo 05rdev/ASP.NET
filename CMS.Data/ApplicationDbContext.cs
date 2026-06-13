@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Họ tên: Huỳnh Văn Định
  * MSSV: 2123110052
  * Version:1.0
@@ -23,6 +23,7 @@ namespace CMS.Data
         public DbSet<Customer> Customers { get; set; }
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderDetail> OrderDetails { get; set; }
+        public DbSet<Banner> Banners { get; set; }
 
     }
 }
