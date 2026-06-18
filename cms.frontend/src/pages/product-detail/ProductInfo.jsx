@@ -1,9 +1,38 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useCart } from '../../context/CartContext';
 
 const IMAGE_BASE_URL = "https://localhost:7125"; // backend image URL
 
 function ProductInfo({ product }) {
     const [quantity, setQuantity] = useState(1);
+    const { addToCart } = useCart();
+    const navigate = useNavigate();
+    const [addedMsg, setAddedMsg] = useState('');
+
+    const handleAddToCart = () => {
+        // Chuẩn hóa object đưa vào giỏ hàng
+        const cartProduct = {
+            id: product.id,
+            name: product.name,
+            price: product.price,
+            imageUrl: IMAGE_BASE_URL + (product.imageUrl || ''),
+        };
+        for (let i = 0; i < quantity; i++) addToCart(cartProduct);
+        setAddedMsg(`✔ Đã thêm ${quantity} sản phẩm vào giỏ hàng!`);
+        setTimeout(() => setAddedMsg(''), 3000);
+    };
+
+    const handleBuyNow = () => {
+        const cartProduct = {
+            id: product.id,
+            name: product.name,
+            price: product.price,
+            imageUrl: IMAGE_BASE_URL + (product.imageUrl || ''),
+        };
+        for (let i = 0; i < quantity; i++) addToCart(cartProduct);
+        navigate('/checkout');
+    };
 
     const formatCurrency = (value) => {
         return new Intl.NumberFormat('vi-VN', {
@@ -90,18 +119,25 @@ function ProductInfo({ product }) {
                             </div>
                         </div>
 
+                        {addedMsg && (
+                            <div className="alert alert-success py-2 mb-3" style={{ borderRadius: '10px', fontSize: '14px' }}>
+                                {addedMsg}
+                            </div>
+                        )}
                         <div className="d-flex gap-3">
                             <button
                                 className="btn btn-primary btn-lg font-weight-bold px-4 flex-grow-1"
                                 style={{ backgroundColor: '#005088', borderColor: '#005088', borderRadius: '30px', fontSize: '16px' }}
-                                onClick={() => alert(`Đã thêm ${quantity} sản phẩm [${product.name}] vào giỏ hàng!`)}
+                                onClick={handleAddToCart}
+                                disabled={product.stockQuantity === 0}
                             >
                                 <i className="fas fa-shopping-cart mr-2"></i> Thêm Vào Giỏ
                             </button>
                             <button
                                 className="btn btn-success btn-lg font-weight-bold px-4 ml-2 flex-grow-1"
                                 style={{ backgroundColor: '#11CAA0', borderColor: '#11CAA0', borderRadius: '30px', fontSize: '16px' }}
-                                onClick={() => alert(`Bắt đầu thanh toán sản phẩm [${product.name}] với số lượng: ${quantity}`)}
+                                onClick={handleBuyNow}
+                                disabled={product.stockQuantity === 0}
                             >
                                 Mua Ngay
                             </button>
