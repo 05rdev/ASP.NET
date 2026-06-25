@@ -1,34 +1,48 @@
 import React from 'react';
 
-function LoadingOrEmpty({ loading, isEmpty, onClearFilters }) {
-    if (loading) {
+
+
+
+function LoadingOrEmpty({ isLoading, totalItems, children }) {
+    // 1. Kịch bản đang tải dữ liệu qua mạng
+    if (isLoading) {
         return (
-            <div className="text-center py-5">
-                <div className="spinner-border text-primary" role="status" style={{ width: '3rem', height: '3rem' }}></div>
-                <p className="mt-3 text-muted" style={{ fontSize: '15px' }}>Đang tải danh sách sản phẩm...</p>
+            <div className="text-center py-5 my-5">
+                <div className="spinner-border text-primary" role="status" style={{ width: '3rem', height: '3rem' }}>
+                    <span className="sr-only">Loading...</span>
+                </div>
+                <p className="text-muted mt-3 font-italic">V.DinhCMS đang thanh lọc kho hàng, vui lòng chờ...</p>
             </div>
         );
     }
 
-    if (isEmpty) {
+
+
+
+    // 2. Kịch bản bộ lọc không tìm thấy kết quả nào trong SQL Server
+    if (totalItems === 0) {
         return (
-            <div className="text-center py-5 bg-white shadow-sm rounded-lg" style={{ borderRadius: '15px', padding: '40px' }}>
+            <div className="text-center py-5 my-4 bg-white rounded shadow-sm">
                 <img
-                    src="https://cdn-icons-png.flaticon.com/512/6108/6108520.png"
-                    alt="No products"
-                    className="mb-4"
+                    src="https://cdn-icons-png.flaticon.com/512/6134/6134065.png"
+                    alt="Empty"
                     style={{ width: '120px', opacity: 0.5 }}
+                    className="mb-3"
                 />
-                <h4 className="fw-bold text-secondary mb-2">Không Tìm Thấy Sản Phẩm</h4>
-                <p className="text-muted">Không có sản phẩm nào phù hợp với bộ lọc tìm kiếm hiện tại của bạn.</p>
-                <button className="btn btn-primary btn-sm px-4 mt-3" onClick={onClearFilters} style={{ borderRadius: '20px', backgroundColor: '#005088', borderColor: '#005088' }}>
-                    Xóa tất cả bộ lọc
-                </button>
+                <h5 className="font-weight-bold text-secondary">RẤT TIẾC, KHÔNG CÓ SẢN PHẨM PHÙ HỢP</h5>
+                <p className="text-muted small">Vui lòng nới rộng khoảng giá hoặc kiểm tra lại từ khóa tìm kiếm của bạn.</p>
             </div>
         );
     }
 
-    return null;
+
+
+
+    // 3. Nếu dữ liệu hợp lệ và có sản phẩm, trả lại ruột lưới ProductList ban đầu
+    return children;
 }
+
+
+
 
 export default LoadingOrEmpty;

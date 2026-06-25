@@ -17,7 +17,7 @@ function LatestBlog() { // chỉ lấy 3 tin
                 const topThreePosts = data.sort((a, b) => b.id - a.id).slice(0, 3);
                 setPosts(topThreePosts);
             } catch (error) {
-                console.error("Lỗi hệ thống khi tải tin tức thời trang:", error);
+                console.error("Lỗi hệ thống khi tải tin tức công nghệ:", error);
             } finally {
                 setLoading(false);
             }
@@ -42,7 +42,7 @@ function LatestBlog() { // chỉ lấy 3 tin
 
                 <div className="section-heading mb-4 text-center">
                     <h3 className="font-weight-bold text-uppercase" style={{ color: '#005088' }}>
-                        Xu Hướng Thời Trang
+                        Xu Hướng Công nghệ
                     </h3>
                     <p className="text-muted lead" style={{ fontSize: '15px' }}>
                         Cập nhật những mẹo phối đồ và tin tức phong cách mới nhất cùng VanDinhCMS

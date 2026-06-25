@@ -14,7 +14,6 @@ using System.Linq;
 
 namespace CMS.Backend.Controllers
 {
-    [Authorize(Roles = "Admin")]
     public class OrderController : Controller
     {
         private readonly ApplicationDbContext _context;

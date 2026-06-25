@@ -40,7 +40,7 @@ function Blog() {
                             <li className="breadcrumb-item active text-dark font-weight-bold" aria-current="page">Tin Tức / Blog</li>
                         </ol>
                     </nav>
-                    <h2 className="font-weight-bold mt-2" style={{ color: '#005088' }}>TIN TỨC & XU HƯỚNG THỜI TRANG</h2>
+                    <h2 className="font-weight-bold mt-2" style={{ color: '#005088' }}>TIN TỨC & XU HƯỚNG CÔNG NGHỆ</h2>
                 </div>
             </div>
 

@@ -17,7 +17,7 @@ const TEAM = [
 
 // Thống kê
 const STATS = [
-    { icon: 'fas fa-tshirt', value: '500+', label: 'Sản phẩm thời trang' },
+    { icon: 'fas fa-tshirt', value: '500+', label: 'Sản phẩm công nghệ' },
     { icon: 'fas fa-users', value: '1.200+', label: 'Khách hàng tin tưởng' },
     { icon: 'fas fa-shopping-bag', value: '3.500+', label: 'Đơn hàng đã giao' },
     { icon: 'fas fa-star', value: '4.8/5', label: 'Điểm đánh giá trung bình' },
@@ -47,75 +47,27 @@ const VALUES = [
         icon: 'fas fa-bolt',
         color: '#f39c12',
         title: 'Đổi mới liên tục',
-        desc: 'Luôn cập nhật xu hướng thời trang quốc tế, ứng dụng công nghệ AI gợi ý phong cách và trải nghiệm mua sắm thông minh.'
+        desc: 'Luôn cập nhật xu hướng công nghệ quốc tế, ứng dụng công nghệ AI gợi ý phong cách và trải nghiệm mua sắm thông minh.'
     },
 ];
 
 function About() {
     return (
-        <div style={{ fontFamily: "'Inter', sans-serif" }}>
-            <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+        <div className="about-page-wrapper">
             <Header />
 
-            {/* ── HERO SECTION ── */}
-            <section style={{
-                background: 'linear-gradient(135deg, #005088 0%, #003a63 50%, #11CAA0 100%)',
-                padding: '80px 0',
-                position: 'relative',
-                overflow: 'hidden'
-            }}>
-                {/* Hình trang trí nền */}
-                <div style={{
-                    position: 'absolute', top: '-60px', right: '-60px',
-                    width: '300px', height: '300px', borderRadius: '50%',
-                    background: 'rgba(17,202,160,0.15)'
-                }} />
-                <div style={{
-                    position: 'absolute', bottom: '-80px', left: '-40px',
-                    width: '200px', height: '200px', borderRadius: '50%',
-                    background: 'rgba(255,255,255,0.07)'
-                }} />
-
-                <div className="container text-center" style={{ position: 'relative', zIndex: 1 }}>
-                    <span style={{
-                        display: 'inline-block', background: 'rgba(17,202,160,0.25)',
-                        color: '#11CAA0', padding: '6px 18px', borderRadius: '20px',
-                        fontSize: '13px', fontWeight: 600, marginBottom: '20px',
-                        border: '1px solid rgba(17,202,160,0.4)'
-                    }}>
-                        ✦ V.DinhCMS.Fashion
-                    </span>
-                    <h1 style={{
-                        color: '#fff', fontSize: '48px', fontWeight: 800,
-                        lineHeight: 1.2, marginBottom: '20px', letterSpacing: '-1px'
-                    }}>
-                        Câu chuyện của<br />
-                        <span style={{ color: '#11CAA0' }}>V.DinhCMS Fashion</span>
-                    </h1>
-                    <p style={{
-                        color: 'rgba(255,255,255,0.8)', fontSize: '18px',
-                        maxWidth: '600px', margin: '0 auto 36px', lineHeight: 1.7
-                    }}>
-                        Nơi thời trang gặp gỡ công nghệ — Hành trình xây dựng hệ thống
-                        thương mại điện tử hiện đại phục vụ cộng đồng yêu thời trang Việt Nam.
-                    </p>
-                    <div className="d-flex justify-content-center">
-                        <Link to="/shop" className="btn btn-lg mr-3" style={{
-                            background: '#11CAA0', color: '#fff', borderRadius: '12px',
-                            padding: '14px 32px', fontWeight: 700, border: 'none'
-                        }}>
-                            <i className="fas fa-store mr-2"></i> Mua sắm ngay
-                        </Link>
-                        <a href="#our-story" className="btn btn-lg" style={{
-                            background: 'rgba(255,255,255,0.15)', color: '#fff',
-                            borderRadius: '12px', padding: '14px 32px', fontWeight: 600,
-                            border: '1px solid rgba(255,255,255,0.3)'
-                        }}>
-                            Tìm hiểu thêm <i className="fas fa-arrow-down ml-2"></i>
-                        </a>
-                    </div>
+            {/* Banner đầu trang Giới thiệu - Đồng bộ với các trang khác */}
+            <div className="about-banner bg-white border-bottom py-4 mb-4">
+                <div className="container">
+                    <nav aria-label="breadcrumb">
+                        <ol className="breadcrumb bg-transparent p-0 m-0" style={{ fontSize: '14px' }}>
+                            <li className="breadcrumb-item"><a href="/" className="text-decoration-none text-secondary">Trang Chủ</a></li>
+                            <li className="breadcrumb-item active text-dark font-weight-bold" aria-current="page">Về Chúng Tôi</li>
+                        </ol>
+                    </nav>
+                    <h2 className="font-weight-bold mt-2" style={{ color: '#005088' }}>GIỚI THIỆU VỀ CHÚNG TÔI</h2>
                 </div>
-            </section>
+            </div>
 
             {/* ── THỐNG KÊ ── */}
             <section style={{ background: '#fff', padding: '0', marginTop: '-1px' }}>
@@ -145,7 +97,7 @@ function About() {
                             <div style={{ position: 'relative' }}>
                                 <img
                                     src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=500&q=80"
-                                    alt="VanDinhCMS Fashion Store"
+                                    alt="VanDinhCMS GMGear Store"
                                     style={{
                                         width: '100%', borderRadius: '20px',
                                         boxShadow: '0 20px 60px rgba(0,0,0,0.15)'
@@ -177,11 +129,11 @@ function About() {
                                 fontSize: '36px', fontWeight: 800, color: '#1a1a2e',
                                 margin: '16px 0 24px', lineHeight: 1.3
                             }}>
-                                Từ đam mê thời trang<br />đến hệ thống CMS hiện đại
+                                Từ đam mê công nghệ<br />đến hệ thống CMS hiện đại
                             </h2>
                             <p style={{ color: '#555', lineHeight: 1.8, fontSize: '16px', marginBottom: '20px' }}>
-                                <strong>V.DinhCMS.Fashion</strong> được ra đời từ dự án thực tập sinh viên với mục tiêu xây dựng
-                                một nền tảng thương mại điện tử thời trang hoàn chỉnh — từ hệ thống quản trị nội dung
+                                <strong>V.DinhCMS.GMGear</strong> được ra đời từ dự án thực tập sinh viên với mục tiêu xây dựng
+                                một nền tảng thương mại điện tử công nghệ hoàn chỉnh — từ hệ thống quản trị nội dung
                                 (CMS) đến giao diện mua sắm dành cho khách hàng cuối.
                             </p>
                             <p style={{ color: '#555', lineHeight: 1.8, fontSize: '16px', marginBottom: '20px' }}>
@@ -190,7 +142,7 @@ function About() {
                                 Tích hợp thêm công nghệ <strong>AI (Ollama)</strong> để hỗ trợ tìm kiếm sản phẩm thông minh.
                             </p>
                             <p style={{ color: '#555', lineHeight: 1.8, fontSize: '16px' }}>
-                                Sứ mệnh của chúng tôi: Mang đến trải nghiệm mua sắm thời trang cao cấp,
+                                Sứ mệnh của chúng tôi: Mang đến trải nghiệm mua sắm công nghệ cao cấp,
                                 tiện lợi và cá nhân hóa cho mọi khách hàng Việt Nam.
                             </p>
                             <div className="mt-4 d-flex flex-wrap" style={{ gap: '12px' }}>
@@ -293,54 +245,7 @@ function About() {
                 </div>
             </section>
 
-            {/* ── LIÊN HỆ & CTA ── */}
-            <section style={{
-                background: 'linear-gradient(135deg, #005088 0%, #11CAA0 100%)',
-                padding: '80px 0'
-            }}>
-                <div className="container text-center">
-                    <h2 style={{
-                        color: '#fff', fontSize: '36px', fontWeight: 800,
-                        marginBottom: '16px', letterSpacing: '-0.5px'
-                    }}>
-                        Bắt đầu mua sắm ngay hôm nay!
-                    </h2>
-                    <p style={{ color: 'rgba(255,255,255,0.85)', fontSize: '18px', marginBottom: '36px' }}>
-                        Hàng ngàn mẫu thời trang cao cấp đang chờ bạn khám phá.
-                    </p>
-                    <div className="d-flex justify-content-center flex-wrap" style={{ gap: '16px' }}>
-                        <Link to="/shop" className="btn btn-lg" style={{
-                            background: '#fff', color: '#005088',
-                            borderRadius: '12px', padding: '14px 36px',
-                            fontWeight: 700, fontSize: '16px'
-                        }}>
-                            <i className="fas fa-shopping-bag mr-2"></i> Khám phá cửa hàng
-                        </Link>
-                        <Link to="/register" className="btn btn-lg" style={{
-                            background: 'transparent', color: '#fff',
-                            borderRadius: '12px', padding: '14px 36px',
-                            fontWeight: 600, fontSize: '16px',
-                            border: '2px solid rgba(255,255,255,0.6)'
-                        }}>
-                            <i className="fas fa-user-plus mr-2"></i> Đăng ký tài khoản
-                        </Link>
-                    </div>
 
-                    {/* Thông tin liên hệ */}
-                    <div className="row justify-content-center mt-5" style={{ gap: '0' }}>
-                        {[
-                            { icon: 'fas fa-map-marker-alt', text: 'Khu CNC, Võ Chí Công, Q.9, TP.HCM' },
-                            { icon: 'fas fa-phone-alt', text: 'Hotline: 090x.xxx.xxx' },
-                            { icon: 'fas fa-envelope', text: 'support@vandinhcms.retail' },
-                        ].map((info, i) => (
-                            <div key={i} className="col-md-4 mb-3 mb-md-0" style={{ color: 'rgba(255,255,255,0.85)', fontSize: '14px' }}>
-                                <i className={info.icon + ' mr-2'} style={{ color: 'rgba(255,255,255,0.7)' }}></i>
-                                {info.text}
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            </section>
 
             <Footer />
         </div>

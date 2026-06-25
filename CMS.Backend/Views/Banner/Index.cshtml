@@ -8,86 +8,100 @@ Version:1.0 *@
     ViewData["Title"] = "Quản lý Banner";
 }
 
-<div class="container mt-4">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <h2 class="text-dark">QUẢN LÝ BANNER</h2>
-        <a asp-action="Create" class="btn btn-success btn-sm">
-            <i class="bi bi-plus-circle"></i> Thêm banner mới
-        </a>
+<div class="container-fluid py-2">
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center border-bottom">
+            <h4 class="mb-0 fw-bold text-dark">
+                <i class="bi bi-images text-primary me-2"></i>QUẢN LÝ BANNER
+            </h4>
+            <a asp-action="Create" class="btn btn-success px-4 py-2 rounded-3 shadow-sm font-weight-bold">
+                <i class="bi bi-plus-lg me-1"></i> Thêm banner mới
+            </a>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light text-uppercase text-secondary" style="font-size: 0.85rem; letter-spacing: 0.5px;">
+                        <tr>
+                            <th class="ps-4" style="width: 80px;">ID</th>
+                            <th style="width: 120px;">Hình Ảnh</th>
+                            <th>Tiêu Đề / Mô Tả</th>
+                            <th>Liên Kết</th>
+                            <th class="text-center" style="width: 100px;">Thứ Tự</th>
+                            <th class="text-center" style="width: 150px;">Trạng Thái</th>
+                            <th class="text-end pe-4" style="width: 200px;">Thao Tác</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model != null && Model.Any())
+                        {
+                            foreach (var banner in Model)
+                            {
+                                <tr>
+                                    <td class="ps-4 text-muted">#@banner.Id</td>
+                                    <td>
+                                        @if (!string.IsNullOrEmpty(banner.ImageUrl))
+                                        {
+                                            <div class="border rounded" style="width: 80px; height: 45px; overflow: hidden;">
+                                                <img src="@banner.ImageUrl" alt="@banner.Title" class="w-100 h-100" style="object-fit: cover;" />
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-light text-secondary border px-2 py-1 rounded">Không ảnh</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        <div class="fw-semibold text-dark mb-1">@banner.Title</div>
+                                        @if (!string.IsNullOrEmpty(banner.Description))
+                                        {
+                                            <small class="text-muted d-block text-truncate" style="max-width: 300px;" title="@banner.Description">
+                                                @banner.Description
+                                            </small>
+                                        }
+                                    </td>
+                                    <td>
+                                        <a href="@banner.LinkUrl" target="_blank" class="text-decoration-none text-truncate d-inline-block text-primary fw-medium" style="max-width: 200px;" title="@banner.LinkUrl">
+                                            <i class="bi bi-link-45deg me-1"></i>Xem link
+                                        </a>
+                                    </td>
+                                    <td class="text-center fw-semibold text-dark">@banner.Order</td>
+                                    <td class="text-center">
+                                        @if (banner.IsActive)
+                                        {
+                                            <span class="badge bg-success-subtle text-success border border-success-subtle px-2.5 py-1 rounded-2">Đang hoạt động</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-secondary-subtle text-secondary border border-secondary-subtle px-2.5 py-1 rounded-2">Tạm ẩn</span>
+                                        }
+                                    </td>
+                                    <td class="text-end pe-4">
+                                        <div class="btn-group btn-group-sm" role="group">
+                                            <a asp-action="Edit" asp-route-id="@banner.Id" class="btn btn-outline-primary px-3 rounded-start-3">
+                                                <i class="bi bi-pencil-square"></i> Sửa
+                                            </a>
+                                            <a asp-action="Delete" asp-route-id="@banner.Id" class="btn btn-outline-danger px-3 rounded-end-3" 
+                                               onclick="return confirm('Bạn có chắc chắn muốn xóa banner này?')">
+                                                <i class="bi bi-trash"></i> Xóa
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="7" class="text-center text-muted py-5">
+                                    <i class="bi bi-inbox fs-3 d-block mb-2 text-secondary"></i>
+                                    Không có banner nào được tìm thấy.
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
-
-    <table class="table table-hover shadow-sm border align-middle">
-        <thead class="table-light">
-            <tr>
-                <th style="width: 5%;">ID</th>
-                <th style="width: 15%;">Hình Ảnh</th>
-                <th style="width: 25%;">Tiêu Đề</th>
-                <th style="width: 20%;">Liên Kết</th>
-                <th style="width: 10%;" class="text-center">Thứ Tự</th>
-                <th style="width: 10%;" class="text-center">Trạng Thái</th>
-                <th style="width: 15%;" class="text-center">Thao Tác</th>
-            </tr>
-        </thead>
-        <tbody>
-            @if (Model != null && Model.Any())
-            {
-                foreach (var banner in Model)
-                {
-                    <tr>
-                        <td>@banner.Id</td>
-                        <td>
-                            @if (!string.IsNullOrEmpty(banner.ImageUrl))
-                            {
-                                <img src="@banner.ImageUrl" alt="@banner.Title" class="img-thumbnail" style="max-width: 100px; max-height: 50px; object-fit: cover;" />
-                            }
-                            else
-                            {
-                                <span class="text-muted" style="font-size: 12px;">Không có ảnh</span>
-                            }
-                        </td>
-                        <td>
-                            <strong>@banner.Title</strong>
-                            @if (!string.IsNullOrEmpty(banner.Description))
-                            {
-                                <small class="text-muted d-block text-truncate" style="max-width: 250px;" title="@banner.Description">
-                                    @banner.Description
-                                </small>
-                            }
-                        </td>
-                        <td>
-                            <a href="@banner.LinkUrl" target="_blank" class="text-decoration-none text-truncate d-block" style="max-width: 200px;">
-                                @banner.LinkUrl
-                            </a>
-                        </td>
-                        <td class="text-center fw-bold">@banner.Order</td>
-                        <td class="text-center">
-                            @if (banner.IsActive)
-                            {
-                                <span class="badge bg-success">Đang hoạt động</span>
-                            }
-                            else
-                            {
-                                <span class="badge bg-secondary">Tạm ẩn</span>
-                            }
-                        </td>
-                        <td class="text-center">
-                            <a asp-action="Edit" asp-route-id="@banner.Id" class="btn btn-sm btn-outline-warning">
-                                <i class="bi bi-pencil"></i> Sửa
-                            </a>
-                            <a asp-action="Delete" asp-route-id="@banner.Id" class="btn btn-sm btn-outline-danger" 
-                               onclick="return confirm('Bạn có chắc chắn muốn xóa banner này?')">
-                                <i class="bi bi-trash"></i> Xóa
-                            </a>
-                        </td>
-                    </tr>
-                }
-            }
-            else
-            {
-                <tr>
-                    <td colspan="7" class="text-center text-muted py-3">Không có banner nào được tìm thấy.</td>
-                </tr>
-            }
-        </tbody>
-    </table>
 </div>

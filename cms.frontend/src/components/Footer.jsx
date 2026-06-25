@@ -10,10 +10,10 @@ function Footer() {
                     {/* Cột 1: Giới thiệu ngắn gọn về thương hiệu */}
                     <div className="col-md-4 mb-4 mb-md-0">
                         <h4 className="font-weight-bold mb-3" style={{ color: '#11CAA0', letterSpacing: '1px' }}>
-                            VanDinhCMS<span className="text-white">.Fashion</span>
+                            VanDinhCMS<span className="text-white">.GMGear</span>
                         </h4>
                         <p className="text-muted text-justify" style={{ fontSize: '14px', lineHeight: '1.6' }}>
-                            Hệ thống thời trang cao cấp dẫn đầu xu hướng. Chúng tôi cam kết mang đến những sản phẩm premium chất lượng cao, định hình phong cách thời thượng cho bạn.
+                            Hệ thống công nghệ cao cấp dẫn đầu xu hướng. Chúng tôi cam kết mang đến những sản phẩm premium chất lượng cao, định hình phong cách thời thượng cho bạn.
                         </p>
                     </div>
 

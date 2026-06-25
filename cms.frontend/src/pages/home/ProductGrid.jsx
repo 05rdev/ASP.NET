@@ -14,9 +14,9 @@ function ProductGrid({ selectedCategoryId }) {
             try {
                 setLoading(true);
                 const data = selectedCategoryId 
-                    ? await productService.getProductsByCategory(selectedCategoryId)
+                    ? await productService.getAllProducts({ categoryProductId: selectedCategoryId })
                     : await productService.getAllProducts();
-                setProducts(data);
+                setProducts(data.data || data);
             } catch (error) {
                 console.error("Lỗi hệ thống khi tải danh sách sản phẩm:", error);
             } finally {

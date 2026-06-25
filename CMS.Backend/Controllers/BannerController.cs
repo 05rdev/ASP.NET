@@ -15,7 +15,6 @@ using System.Linq;
 
 namespace CMS.Backend.Controllers
 {
-    [Authorize(Roles = "Admin")]
     public class BannerController : Controller
     {
         private readonly ApplicationDbContext _context;

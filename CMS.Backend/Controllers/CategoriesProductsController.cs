@@ -29,7 +29,7 @@ namespace CMS.Backend.Controllers
         }
 
         /// <summary>
-        /// API lấy toàn bộ danh mục sản phẩm thời trang (Giao thức GET)
+        /// API lấy toàn bộ danh mục sản phẩm công nghệ (Giao thức GET)
         /// Đường dẫn gọi dữ liệu: GET https://localhost:xxxx/api/CategoriesProducts
         /// </summary>
         [HttpGet]

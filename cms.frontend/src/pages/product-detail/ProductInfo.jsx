@@ -89,7 +89,7 @@ function ProductInfo({ product }) {
                         <div className="product-description my-4">
                             <h6 className="font-weight-bold text-uppercase text-secondary mb-2" style={{ fontSize: '13px', letterSpacing: '1px' }}>Mô tả sản phẩm</h6>
                             <p className="text-muted text-justify" style={{ fontSize: '15px', lineHeight: '1.6' }}>
-                                {product.description || "Sản phẩm thời trang cao cấp với chất liệu tự nhiên, mềm mại, bền màu, mang đến cảm giác thoải mái khi mặc và định hình phong cách lịch lãm, hiện đại cho người dùng."}
+                                {product.description || "Sản phẩm công nghệ cao cấp với chất liệu tự nhiên, mềm mại, bền màu, mang đến cảm giác thoải mái khi mặc và định hình phong cách lịch lãm, hiện đại cho người dùng."}
                             </p>
                         </div>
                     </div>

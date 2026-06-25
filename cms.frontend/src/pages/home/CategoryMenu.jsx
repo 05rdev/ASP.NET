@@ -32,7 +32,7 @@ function CategoryMenu({ activeCategoryId, onCategoryClick }) {
     }, []);
 
 
-    // 5. Hàm xử lý khi khách hàng click chọn một danh mục thời trang cụ thể
+    // 5. Hàm xử lý khi khách hàng click chọn một danh mục công nghệ cụ thể
     const handleCategoryClick = (id) => {
         if (onCategoryClick) {
             onCategoryClick(id);

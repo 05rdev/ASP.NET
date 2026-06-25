@@ -1,15 +1,43 @@
 import React from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { useCart } from '../context/CartContext';
+import authService from '../services/authService';
 
 const IMAGE_BASE_URL = "https://localhost:7125"; // đường dẫn bên Backend
-// file thành phần component  nhận vào đối tượng 'item' từ file thành phần component  cha truyền xuống
+
 function ProductCard({ item }) {
-    
+    const { addToCart } = useCart();
+    const navigate = useNavigate();
+
     // Hàm bổ trợ: Định dạng số thô thành chuỗi tiền tệ VNĐ (450.000 ₫)
     const formatCurrency = (value) => {
         return new Intl.NumberFormat('vi-VN', {
             style: 'currency',
             currency: 'VND'
         }).format(value);
+    };
+
+    /**
+     * Xử lý thêm sản phẩm vào giỏ hàng thông qua CartContext
+     * Kiểm tra đăng nhập trước khi cho phép thêm vào giỏ
+     */
+    const handleAddToCart = () => {
+        if (!authService.isLoggedIn()) {
+            alert("Vui lòng đăng nhập tài khoản khách hàng để thêm sản phẩm vào giỏ!");
+            navigate('/login');
+            return;
+        }
+
+        const cartProduct = {
+            id: item.id,
+            name: item.name,
+            price: item.price,
+            imageUrl: IMAGE_BASE_URL + (item.imageUrl || ''),
+        };
+        addToCart(cartProduct);
+        
+        // Thông báo bằng hộp thoại rõ ràng thay vì overlay trên hình ảnh
+        alert(`🎉 Đã thêm sản phẩm "${item.name}" vào giỏ hàng thành công!`);
     };
 
     return (
@@ -48,17 +76,17 @@ function ProductCard({ item }) {
 
                 {/* Cụm nút bấm tương tác đẩy sát đáy thẻ (mt-auto) */}
                 <div className="mt-auto pt-2 border-top d-flex justify-content-between">
-                    <a 
-                        href={`/product/${item.id}`} 
-                        className="btn btn-sm btn-outline-primary font-weight-bold px-3" 
-                        style={{ borderRadius: '20px', flexGrow: 1, textAlign: 'center' }}
+                    <Link 
+                        to={`/product/${item.id}`} 
+                        className="btn btn-sm btn-outline-primary font-weight-bold px-3 d-flex align-items-center justify-content-center" 
+                        style={{ borderRadius: '20px', flexGrow: 1 }}
                     >
                         <i className="fas fa-eye mr-1"></i> Chi tiết
-                    </a>
+                    </Link>
                     <button 
                         className="btn btn-sm text-white font-weight-bold px-3 ml-2" 
                         style={{ borderRadius: '20px', backgroundColor: '#11CAA0', borderColor: '#11CAA0', flexGrow: 1 }}
-                        onClick={() => alert(`Đã thêm mẫu [${item.name}] vào giỏ hàng!`)}
+                        onClick={handleAddToCart}
                     >
                         <i className="fas fa-cart-plus mr-1"></i> Mua ngay
                     </button>

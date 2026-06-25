@@ -7,6 +7,7 @@ using CMS.Data;
 using CMS.Data.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.EntityFrameworkCore;
 
 namespace CMS.Backend.Controllers
 {
@@ -23,8 +24,8 @@ namespace CMS.Backend.Controllers
 
         public IActionResult Index()
         {
-            // Lấy dữ liệu từ bảng Customers trong SQL
-            var data = _context.Customers.ToList();
+            // Lấy dữ liệu từ bảng Customers trong SQL kèm theo danh sách đơn đặt hàng
+            var data = _context.Customers.Include(c => c.Orders).ToList();
             return View(data);
         }
 

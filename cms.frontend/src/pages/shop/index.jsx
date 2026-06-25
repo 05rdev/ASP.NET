@@ -1,68 +1,75 @@
 import React, { useState, useEffect } from 'react';
-import Header from '../../components/Header';
-import Footer from '../../components/Footer';
+import productService from '../../services/productService';
 import ShopSidebar from './ShopSidebar';
 import ShopHeader from './ShopHeader';
 import ProductList from './ProductList';
 import LoadingOrEmpty from './LoadingOrEmpty';
-import productService from '../../services/productService';
+import Footer from '../../components/Footer';
+import Header from '../../components/Header';
+
+
+
 
 function Shop() {
+    // State 1: Lưu trữ mảng danh sách sản phẩm đổ ra giao diện
     const [products, setProducts] = useState([]);
-    const [loading, setLoading] = useState(true);
 
-    // States cho bộ lọc
-    const [activeCategoryId, setActiveCategoryId] = useState(null);
-    const [minPrice, setMinPrice] = useState(0);
-    const [maxPrice, setMaxPrice] = useState(1000000000);
-    const [searchTerm, setSearchTerm] = useState('');
-    const [sortBy, setSortBy] = useState('default');
 
-    // Gọi API nạp sản phẩm
+    // State 2: Quản lý trạng thái chờ mạng (UX hiệu ứng xoay)
+    const [isLoading, setIsLoading] = useState(true);
+
+
+
+
+    // State 3: Khối quản lý tập trung toàn bộ tiêu chí lọc từ database
+    const [filters, setFilters] = useState({
+        categoryProductId: null,   // Mặc định null là lấy tất cả danh mục
+        minPrice: '',       // Để trống nghĩa là không giới hạn sàn giá
+        maxPrice: '',       // Để trống nghĩa là không giới hạn trần giá
+        keyword: ''         // Từ khóa tìm kiếm rỗng
+    });
+
+
+
+
+    // useEffect theo dõi biến [filters]. Cứ khi nào 1 trong các ô lọc thay đổi -> API tự gọi ngầm
     useEffect(() => {
-        const fetchProducts = async () => {
+        const fetchFilterProducts = async () => {
             try {
-                setLoading(true);
-                const data = activeCategoryId
-                    ? await productService.getProductsByCategory(activeCategoryId)
-                    : await productService.getAllProducts();
-                setProducts(data);
+                setIsLoading(true); // Bật hiệu ứng chờ mạng
+
+                // Tạo bản sao sạch: loại bỏ các key có giá trị null/rỗng trước khi gửi API
+                const cleanFilters = {};
+                if (filters.categoryProductId) cleanFilters.categoryProductId = filters.categoryProductId;
+                if (filters.minPrice !== '') cleanFilters.minPrice = filters.minPrice;
+                if (filters.maxPrice !== '') cleanFilters.maxPrice = filters.maxPrice;
+                if (filters.keyword !== '') cleanFilters.keyword = filters.keyword;
+
+                // Gửi cụm đối tượng filters xuống API Backend C#
+                const response = await productService.getAllProducts(cleanFilters);
+                setProducts(response.data || response); // Cập nhật mảng sản phẩm mới
             } catch (error) {
-                console.error("Lỗi khi tải sản phẩm tại trang shop:", error);
+                console.error("Lỗi gọi API lọc sản phẩm:", error);
             } finally {
-                setLoading(false);
+                setIsLoading(false); // Tắt hiệu ứng chờ mạng
             }
         };
-        fetchProducts();
-    }, [activeCategoryId]);
+        fetchFilterProducts();
+    }, [filters]);
 
-    // Xử lý lọc client-side (Search và Giá)
-    const filteredProducts = products
-        .filter((prod) => {
-            const matchesSearch = prod.name.toLowerCase().includes(searchTerm.toLowerCase());
-            const matchesPrice = prod.price >= minPrice && prod.price <= maxPrice;
-            return matchesSearch && matchesPrice;
-        })
-        .sort((a, b) => {
-            if (sortBy === 'priceAsc') return a.price - b.price;
-            if (sortBy === 'priceDesc') return b.price - a.price;
-            if (sortBy === 'nameAsc') return a.name.localeCompare(b.name);
-            return b.id - a.id; // mặc định/mới nhất
-        });
 
-    // Hàm xóa bộ lọc
-    const handleClearFilters = () => {
-        setActiveCategoryId(null);
-        setMinPrice(0);
-        setMaxPrice(1000000000);
-        setSearchTerm('');
-        setSortBy('default');
+
+
+    // Hàm CallBack truyền xuống cho các con kích hoạt khi người dùng thao tác
+    const handleFilterUpdate = (newFields) => {
+        setFilters(prev => ({
+            ...prev,
+            ...newFields // Gộp đè các trường lọc mới vào trạng thái cũ
+        }));
     };
 
-    const handlePriceChange = (min, max) => {
-        setMinPrice(min);
-        setMaxPrice(max);
-    };
+
+
 
     return (
         <div className="shop-page-wrapper">
@@ -81,42 +88,37 @@ function Shop() {
                 </div>
             </div>
 
-            {/* Bố cục chính Grid */}
-            <div className="container py-3">
+            <div className="container py-4">
                 <div className="row">
-                    {/* Cột trái: Sidebar lọc */}
-                    <div className="col-lg-3 col-md-4">
+                    {/* CỘT TRÁI (3/12): Khu vực chứa bộ lọc dọc */}
+                    <aside className="col-md-3 mb-4">
                         <ShopSidebar
-                            activeCategoryId={activeCategoryId}
-                            onCategoryClick={setActiveCategoryId}
-                            minPrice={minPrice}
-                            maxPrice={maxPrice}
-                            onPriceChange={handlePriceChange}
+                            activeCategory={filters.categoryProductId}
+                            minPrice={filters.minPrice}
+                            maxPrice={filters.maxPrice}
+                            onFilterChange={handleFilterUpdate}
                         />
-                    </div>
+                    </aside>
 
-                    {/* Cột phải: Danh sách sản phẩm & Header */}
-                    <div className="col-lg-9 col-md-8">
+
+
+
+                    {/* CỘT PHẢI (9/12): Khu vực chứa thanh Search và Lưới hàng hóa */}
+                    <main className="col-md-9">
                         <ShopHeader
-                            searchTerm={searchTerm}
-                            onSearchChange={setSearchTerm}
-                            productCount={filteredProducts.length}
-                            sortBy={sortBy}
-                            onSortChange={setSortBy}
+                            total={products.length}
+                            keyword={filters.keyword}
+                            onSearchChange={handleFilterUpdate}
                         />
 
-                        {/* Loading or Empty state handler */}
-                        <LoadingOrEmpty
-                            loading={loading}
-                            isEmpty={filteredProducts.length === 0}
-                            onClearFilters={handleClearFilters}
-                        />
 
-                        {/* Grid danh sách thực tế */}
-                        {!loading && filteredProducts.length > 0 && (
-                            <ProductList products={filteredProducts} />
-                        )}
-                    </div>
+
+
+                        {/* Kiểm soát UX qua LoadingOrEmpty trước khi render danh sách */}
+                        <LoadingOrEmpty isLoading={isLoading} totalItems={products.length}>
+                             <ProductList products={products} /> 
+                        </LoadingOrEmpty>
+                    </main>
                 </div>
             </div>
 
@@ -124,5 +126,8 @@ function Shop() {
         </div>
     );
 }
+
+
+
 
 export default Shop;

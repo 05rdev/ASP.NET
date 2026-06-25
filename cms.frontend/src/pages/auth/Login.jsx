@@ -66,10 +66,23 @@ function Login() {
     };
 
     return (
-        <div style={{ fontFamily: "'Inter', sans-serif", background: '#f0f4f8', minHeight: '100vh' }}>
-            <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+        <div className="login-page-wrapper" style={{ background: '#f0f4f8', minHeight: '100vh' }}>
             <Header />
-            <div className="container py-5">
+
+            {/* Banner breadcrumb đồng bộ với các trang khác */}
+            <div className="bg-white border-bottom py-4 mb-4">
+                <div className="container">
+                    <nav aria-label="breadcrumb">
+                        <ol className="breadcrumb bg-transparent p-0 m-0" style={{ fontSize: '14px' }}>
+                            <li className="breadcrumb-item"><a href="/" className="text-decoration-none text-secondary">Trang Chủ</a></li>
+                            <li className="breadcrumb-item active text-dark font-weight-bold" aria-current="page">Đăng Nhập</li>
+                        </ol>
+                    </nav>
+                    <h2 className="font-weight-bold mt-2" style={{ color: '#005088' }}>ĐĂNG NHẬP</h2>
+                </div>
+            </div>
+
+            <div className="container pb-5">
                 <div className="row justify-content-center">
                     <div className="col-md-6 col-lg-5">
                         <div className="card border-0 shadow-lg" style={{ borderRadius: '20px', overflow: 'hidden' }}>
@@ -82,7 +95,7 @@ function Login() {
                                     <i className="fas fa-sign-in-alt mr-2"></i> Đăng nhập
                                 </h2>
                                 <p className="text-white mb-0" style={{ opacity: 0.85, fontSize: '14px' }}>
-                                    Chào mừng trở lại V.DinhCMS.Fashion!
+                                    Chào mừng trở lại V.DinhCMS.GMGear!
                                 </p>
                             </div>
 

@@ -13,7 +13,6 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace CMS.Backend.Controllers
 {
-    [Authorize(Roles = "Admin")]
     public class PostController : Controller
     {
         // Hàm Index: Hiển thị danh sách bài viết mẫu

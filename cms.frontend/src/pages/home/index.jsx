@@ -24,15 +24,15 @@ function Home() {
 
 
             {/* TẦNG 3: Menu ngang hiển thị danh mục sản phẩm (Gọi API /api/CategoriesProducts) */}
-            <CategoryMenu 
-                activeCategoryId={selectedCategoryId} 
-                onCategoryClick={setSelectedCategoryId} 
+            <CategoryMenu
+                activeCategoryId={selectedCategoryId}
+                onCategoryClick={setSelectedCategoryId}
             />
 
 
-            {/* TẦNG 4: Lưới hiển thị danh sách sản phẩm thời trang (Gọi API /api/Products) */}
-            <ProductGrid 
-                selectedCategoryId={selectedCategoryId} 
+            {/* TẦNG 4: Lưới hiển thị danh sách sản phẩm công nghệ (Gọi API /api/Products) */}
+            <ProductGrid
+                selectedCategoryId={selectedCategoryId}
             />
 
 

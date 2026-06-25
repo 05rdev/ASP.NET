@@ -1,13 +1,20 @@
 // src/context/CartContext.js
 // Context API toàn cục quản lý trạng thái giỏ hàng xuyên suốt website
-import React, { createContext, useContext, useState, useCallback } from 'react';
+import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
 
 // 1. Tạo Context
 const CartContext = createContext(null);
 
 // 2. Provider bao bọc toàn bộ App
 export function CartProvider({ children }) {
-    const [cartItems, setCartItems] = useState([]);
+    const [cartItems, setCartItems] = useState(() => {
+        const saved = localStorage.getItem('cartItems');
+        return saved ? JSON.parse(saved) : [];
+    });
+
+    useEffect(() => {
+        localStorage.setItem('cartItems', JSON.stringify(cartItems));
+    }, [cartItems]);
 
     /**
      * Thêm sản phẩm vào giỏ hàng.

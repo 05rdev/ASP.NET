@@ -85,7 +85,7 @@ function Header() {
                         <div className="col-md-3 col-6">
                             <Link to="/" className="text-decoration-none">
                                 <h3 className="font-weight-bold m-0" style={{ color: '#005088', letterSpacing: '1px' }}>
-                                    V.DinhCMS<span style={{ color: '#11CAA0' }}>.Fashion</span>
+                                    V.DinhCMS<span style={{ color: '#11CAA0' }}>.GMGear</span>
                                 </h3>
                             </Link>
                         </div>

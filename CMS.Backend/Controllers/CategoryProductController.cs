@@ -11,7 +11,6 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace CMS.Backend.Controllers
 {
-    [Authorize(Roles = "Admin")]
     public class CategoryProductController : Controller
     {
         private readonly ApplicationDbContext _context;

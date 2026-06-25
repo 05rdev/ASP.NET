@@ -143,8 +143,9 @@ Version: 1.2 *@
                 <table class="table table-hover align-middle mb-0">
                     <thead class="table-light">
                         <tr class="text-center">
-                            <th style="width: 8%;" class="py-3">STT</th>
-                            <th style="width: 45%;" class="text-start py-3 ps-4">Sản Phẩm</th>
+                            <th style="width: 6%;" class="py-3">STT</th>
+                            <th style="width: 10%;" class="py-3">Ảnh</th>
+                            <th style="width: 37%;" class="text-start py-3 ps-4">Sản Phẩm</th>
                             <th style="width: 15%;" class="py-3">Giá Đơn Vị</th>
                             <th style="width: 12%;" class="py-3">Số Lượng</th>
                             <th style="width: 20%;" class="text-end py-3 pe-4">Thành Tiền</th>
@@ -163,11 +164,24 @@ Version: 1.2 *@
 
                                 <tr class="text-center">
                                     <td>@stt</td>
+                                    <td>
+                                        @if (!string.IsNullOrEmpty(detail.Product?.ImageUrl))
+                                        {
+                                            <img src="@detail.Product.ImageUrl"
+                                                 alt="@(detail.Product?.Name ?? "Ảnh SP")"
+                                                 class="rounded shadow-sm"
+                                                 style="width: 56px; height: 56px; object-fit: cover; border: 2px solid #eee;" />
+                                        }
+                                        else
+                                        {
+                                            <div class="d-flex justify-content-center align-items-center bg-light rounded"
+                                                 style="width: 56px; height: 56px; margin: 0 auto; border: 2px dashed #ddd;">
+                                                <i class="bi bi-image text-muted" style="font-size: 1.2rem;"></i>
+                                            </div>
+                                        }
+                                    </td>
                                     <td class="text-start ps-4">
                                         <div class="d-flex align-items-center">
-                                            <div class="avatar-icon bg-light-secondary rounded p-2 me-3 d-none d-sm-flex justify-content-center align-items-center" style="width: 36px; height: 36px;">
-                                                <i class="bi bi-box-seam text-secondary"></i>
-                                            </div>
                                             <div>
                                                 <h6 class="mb-0 fw-bold text-dark">@(detail.Product?.Name ?? "Sản phẩm không tồn tại hoặc đã xóa")</h6>
                                                 <span class="text-muted small" style="font-size: 0.75rem;">Mã SP: #@detail.ProductId</span>
@@ -187,7 +201,7 @@ Version: 1.2 *@
 
                             <!-- Order total rows -->
                             <tr class="table-light">
-                                <td colspan="4" class="text-end fw-bold py-3">Tổng giá trị đơn hàng:</td>
+                                <td colspan="5" class="text-end fw-bold py-3">Tổng giá trị đơn hàng:</td>
                                 <td class="text-end pe-4 fw-bold text-danger fs-5 py-3">
                                     @tongTienDonHang.ToString("#,##0") <span class="small">đ</span>
                                 </td>
@@ -196,7 +210,7 @@ Version: 1.2 *@
                         else
                         {
                             <tr>
-                                <td colspan="5" class="text-center text-muted py-5">
+                                <td colspan="6" class="text-center text-muted py-5">
                                     <i class="bi bi-cart-x display-4 text-secondary mb-3 d-block"></i>
                                     <span>Đơn hàng này hiện chưa có sản phẩm nào được liên kết.</span>
                                 </td>

@@ -38,6 +38,7 @@ const authService = {
      */
     logout: () => {
         localStorage.removeItem('customer');
+        localStorage.removeItem('cartItems');
     },
 
     /**

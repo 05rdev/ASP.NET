@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import bannerService from '../../services/bannerService';
 
-const IMAGE_BASE_URL = "https://localhost:7125"; // backend URL
+const IMAGE_BASE_URL = "https://localhost:7125";
 
 function HeroBanner() {
     const [banners, setBanners] = useState([]);
@@ -26,7 +26,7 @@ function HeroBanner() {
     // Tự động chuyển slide sau mỗi 5 giây
     useEffect(() => {
         if (banners.length <= 1) return;
-        
+
         const interval = setInterval(() => {
             setCurrentIndex((prevIndex) => (prevIndex + 1) % banners.length);
         }, 5000);
@@ -57,7 +57,7 @@ function HeroBanner() {
         return (
             <section className="hero-banner-wrapper my-4">
                 <div className="container">
-                    <div 
+                    <div
                         className="position-relative overflow-hidden rounded shadow-lg d-flex align-items-center"
                         style={{
                             height: '400px',
@@ -69,7 +69,7 @@ function HeroBanner() {
                     >
                         <div className="text-white p-5 col-lg-6">
                             <span className="badge badge-warning text-uppercase px-3 py-2 mb-3" style={{ fontSize: '12px', borderRadius: '4px' }}>BỘ SƯU TẬP MỚI HÈ 2026</span>
-                            <h1 className="display-4 font-weight-bold mb-3" style={{ lineHeight: '1.2' }}>Thời Trang <br/>Thời Thượng</h1>
+                            <h1 className="display-4 font-weight-bold mb-3" style={{ lineHeight: '1.2' }}>công nghệ <br />Thời Thượng</h1>
                             <p className="lead mb-4 text-light-50" style={{ fontSize: '16px' }}>Khám phá các thiết kế mới nhất mang phong cách thanh lịch, sang trọng giúp bạn luôn tự tin tỏa sáng mỗi ngày.</p>
                             <a href="/shop" className="btn btn-light btn-lg px-4 font-weight-bold" style={{ borderRadius: '30px', color: '#005088', transition: '0.3s' }}>Mua Ngay</a>
                         </div>
@@ -82,7 +82,7 @@ function HeroBanner() {
     return (
         <section className="hero-banner-wrapper my-4">
             <div className="container">
-                <div 
+                <div
                     className="position-relative overflow-hidden shadow-lg"
                     style={{
                         height: '400px',
@@ -113,14 +113,14 @@ function HeroBanner() {
                                     <p className="lead mb-4 text-white-50" style={{ fontSize: '16px' }}>
                                         {banner.description}
                                     </p>
-                                    <a 
-                                        href={banner.linkUrl} 
-                                        className="btn btn-primary btn-lg px-4 font-weight-bold" 
-                                        style={{ 
-                                            borderRadius: '30px', 
-                                            backgroundColor: '#11CAA0', 
-                                            borderColor: '#11CAA0', 
-                                            transition: '0.3s' 
+                                    <a
+                                        href={banner.linkUrl}
+                                        className="btn btn-primary btn-lg px-4 font-weight-bold"
+                                        style={{
+                                            borderRadius: '30px',
+                                            backgroundColor: '#11CAA0',
+                                            borderColor: '#11CAA0',
+                                            transition: '0.3s'
                                         }}
                                     >
                                         Khám Phá Ngay
@@ -133,15 +133,15 @@ function HeroBanner() {
                     {/* Nút chuyển slide (chỉ hiện khi có nhiều hơn 1 slide) */}
                     {banners.length > 1 && (
                         <>
-                            <button 
-                                className="btn position-absolute text-white border-0" 
+                            <button
+                                className="btn position-absolute text-white border-0"
                                 style={{ top: '50%', left: '20px', transform: 'translateY(-50%)', zIndex: 10, background: 'rgba(0,0,0,0.4)', borderRadius: '50%', width: '45px', height: '45px' }}
                                 onClick={handlePrev}
                             >
                                 <i className="fas fa-chevron-left"></i>
                             </button>
-                            <button 
-                                className="btn position-absolute text-white border-0" 
+                            <button
+                                className="btn position-absolute text-white border-0"
                                 style={{ top: '50%', right: '20px', transform: 'translateY(-50%)', zIndex: 10, background: 'rgba(0,0,0,0.4)', borderRadius: '50%', width: '45px', height: '45px' }}
                                 onClick={handleNext}
                             >
