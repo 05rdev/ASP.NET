@@ -5,6 +5,7 @@ import ShopSidebar from './ShopSidebar';
 import ShopHeader from './ShopHeader';
 import ProductList from './ProductList';
 import LoadingOrEmpty from './LoadingOrEmpty';
+import Pagination from '../../components/Pagination';
 import Footer from '../../components/Footer';
 import Header from '../../components/Header';
 
@@ -22,7 +23,11 @@ function Shop() {
     // State 2: Quản lý trạng thái chờ mạng (UX hiệu ứng xoay)
     const [isLoading, setIsLoading] = useState(true);
 
-
+    // State Phân Trang
+    const [page, setPage] = useState(1);
+    const [pageSize] = useState(5); // Hiển thị 5 sản phẩm trên 1 trang theo yêu cầu của bạn
+    const [totalPages, setTotalPages] = useState(1);
+    const [totalItems, setTotalItems] = useState(0);
 
 
     // State 3: Khối quản lý tập trung toàn bộ tiêu chí lọc từ database
@@ -39,19 +44,23 @@ function Shop() {
             ...prev,
             keyword: urlKeyword
         }));
+        setPage(1);
     }, [urlKeyword]);
 
 
 
 
-    // useEffect theo dõi biến [filters]. Cứ khi nào 1 trong các ô lọc thay đổi -> API tự gọi ngầm
+    // useEffect theo dõi biến [filters, page]. Cứ khi nào lọc hoặc số trang thay đổi -> API tự gọi ngầm
     useEffect(() => {
         const fetchFilterProducts = async () => {
             try {
                 setIsLoading(true); // Bật hiệu ứng chờ mạng
 
                 // Tạo bản sao sạch: loại bỏ các key có giá trị null/rỗng trước khi gửi API
-                const cleanFilters = {};
+                const cleanFilters = {
+                    page: page,
+                    pageSize: pageSize
+                };
                 if (filters.categoryProductId) cleanFilters.categoryProductId = filters.categoryProductId;
                 if (filters.minPrice !== '') cleanFilters.minPrice = filters.minPrice;
                 if (filters.maxPrice !== '') cleanFilters.maxPrice = filters.maxPrice;
@@ -59,7 +68,16 @@ function Shop() {
 
                 // Gửi cụm đối tượng filters xuống API Backend C#
                 const response = await productService.getAllProducts(cleanFilters);
-                setProducts(response.data || response); // Cập nhật mảng sản phẩm mới
+                
+                if (response && response.data !== undefined) {
+                    setProducts(response.data || []);
+                    setTotalPages(response.totalPages || 1);
+                    setTotalItems(response.totalItems || 0);
+                } else {
+                    setProducts(response || []);
+                    setTotalPages(1);
+                    setTotalItems(response ? response.length : 0);
+                }
             } catch (error) {
                 console.error("Lỗi gọi API lọc sản phẩm:", error);
             } finally {
@@ -67,7 +85,7 @@ function Shop() {
             }
         };
         fetchFilterProducts();
-    }, [filters]);
+    }, [filters, page, pageSize]);
 
 
 
@@ -78,6 +96,7 @@ function Shop() {
             ...prev,
             ...newFields // Gộp đè các trường lọc mới vào trạng thái cũ
         }));
+        setPage(1); // Reset số trang về 1 khi đổi tiêu chí lọc
     };
 
 
@@ -118,7 +137,7 @@ function Shop() {
                     {/* CỘT PHẢI (9/12): Khu vực chứa thanh Search và Lưới hàng hóa */}
                     <main className="col-md-9">
                         <ShopHeader
-                            total={products.length}
+                            total={totalItems}
                             keyword={filters.keyword}
                             onSearchChange={handleFilterUpdate}
                         />
@@ -127,8 +146,16 @@ function Shop() {
 
 
                         {/* Kiểm soát UX qua LoadingOrEmpty trước khi render danh sách */}
-                        <LoadingOrEmpty isLoading={isLoading} totalItems={products.length}>
+                        <LoadingOrEmpty isLoading={isLoading} totalItems={totalItems}>
                              <ProductList products={products} /> 
+                             
+                             {/* Thêm điều khiển phân trang */}
+                             <Pagination 
+                                 currentPage={page} 
+                                 totalPages={totalPages} 
+                                 onPageChange={setPage} 
+                                 totalItems={totalItems} 
+                             />
                         </LoadingOrEmpty>
                     </main>
                 </div>
@@ -138,8 +165,5 @@ function Shop() {
         </div>
     );
 }
-
-
-
 
 export default Shop;

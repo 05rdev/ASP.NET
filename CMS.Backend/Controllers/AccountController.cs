@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Họ tên: Huỳnh Văn Định
  * MSSV: 2123110052
  * Version:1.0
@@ -27,8 +27,21 @@ public class AccountController : Controller
     [HttpPost]
     public async Task<IActionResult> Login(string username, string password)
     {
-        // 1. Kiểm tra tài khoản trong Database
-        var user = _context.Users.FirstOrDefault(u => u.Username == username && u.PasswordHash == password);
+        // 1. Kiểm tra tài khoản trong Database bằng mật khẩu đã mã hóa
+        var hashedPassword = CMS.Backend.Services.PasswordHasher.HashPassword(password);
+        var user = _context.Users.FirstOrDefault(u => u.Username == username && u.PasswordHash == hashedPassword);
+
+        // Hỗ trợ nâng cấp tự động cho các tài khoản dùng mật khẩu thô cũ
+        if (user == null)
+        {
+            user = _context.Users.FirstOrDefault(u => u.Username == username && u.PasswordHash == password);
+            if (user != null)
+            {
+                user.PasswordHash = hashedPassword;
+                _context.Users.Update(user);
+                _context.SaveChanges();
+            }
+        }
 
         if (user != null)
         {

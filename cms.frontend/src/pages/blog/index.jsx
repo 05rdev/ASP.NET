@@ -4,20 +4,45 @@ import Footer from '../../components/Footer';
 import BlogSidebar from './BlogSidebar';
 import PostCard from '../../components/PostCard';
 import blogService from '../../services/blogService';
+import Pagination from '../../components/Pagination';
 
 function Blog() {
     const [posts, setPosts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [selectedCategoryId, setSelectedCategoryId] = useState(null);
 
+    // State Phân Trang
+    const [page, setPage] = useState(1);
+    const [pageSize] = useState(4); // Hiển thị 4 bài viết mỗi trang theo yêu cầu của bạn
+    const [totalPages, setTotalPages] = useState(1);
+    const [totalItems, setTotalItems] = useState(0);
+
+    // Reset trang về 1 khi đổi danh mục bài viết
+    useEffect(() => {
+        setPage(1);
+    }, [selectedCategoryId]);
+
     useEffect(() => {
         const fetchPosts = async () => {
             try {
                 setLoading(true);
+                const params = {
+                    page: page,
+                    pageSize: pageSize
+                };
                 const data = selectedCategoryId
-                    ? await blogService.getPostsByCategory(selectedCategoryId)
-                    : await blogService.getAllPosts();
-                setPosts(data);
+                    ? await blogService.getPostsByCategory(selectedCategoryId, params)
+                    : await blogService.getAllPosts(params);
+                
+                if (data && data.data !== undefined) {
+                    setPosts(data.data || []);
+                    setTotalPages(data.totalPages || 1);
+                    setTotalItems(data.totalItems || 0);
+                } else {
+                    setPosts(data || []);
+                    setTotalPages(1);
+                    setTotalItems(data ? data.length : 0);
+                }
             } catch (error) {
                 console.error("Lỗi khi tải bài viết trang blog:", error);
             } finally {
@@ -25,7 +50,7 @@ function Blog() {
             }
         };
         fetchPosts();
-    }, [selectedCategoryId]);
+    }, [selectedCategoryId, page, pageSize]);
 
     return (
         <div className="blog-page-wrapper">
@@ -61,13 +86,23 @@ function Blog() {
                                 <p className="text-muted">Chưa có bài viết nào được đăng tải trong chuyên mục này.</p>
                             </div>
                         ) : (
-                            <div className="row">
-                                {posts.map((post) => (
-                                    <div className="col-md-6 mb-4" key={post.id}>
-                                        <PostCard post={post} />
-                                    </div>
-                                ))}
-                            </div>
+                            <>
+                                <div className="row">
+                                    {posts.map((post) => (
+                                        <div className="col-md-6 mb-4" key={post.id}>
+                                            <PostCard post={post} />
+                                        </div>
+                                    ))}
+                                </div>
+
+                                {/* Điều khiển phân trang bài viết */}
+                                <Pagination 
+                                    currentPage={page} 
+                                    totalPages={totalPages} 
+                                    onPageChange={setPage} 
+                                    totalItems={totalItems} 
+                                />
+                            </>
                         )}
                     </div>
 

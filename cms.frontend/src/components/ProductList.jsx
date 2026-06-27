@@ -50,7 +50,7 @@ const ProductList = ({ selectedCategoryId }) => {
                             {/* Product Image Section */}
                             <div className="position-relative overflow-hidden bg-light" style={{ height: '220px' }}>
                                 <img
-                                    src={item.imageUrl ? (item.imageUrl.startsWith('http') ? item.imageUrl : `https://localhost:7125${item.imageUrl}`) : 'https://images.unsplash.com/photo-1483985988355-763728e1935b?w=600&auto=format&fit=crop&q=80'}
+                                    src={item.imageUrl ? (item.imageUrl.startsWith('http') ? item.imageUrl : `${process.env.REACT_APP_IMAGE_BASE_URL}${item.imageUrl}`) : 'https://images.unsplash.com/photo-1483985988355-763728e1935b?w=600&auto=format&fit=crop&q=80'}
                                     className="w-100 h-100"
                                     alt={item.name}
                                     style={{ objectFit: 'cover', transition: 'transform 0.4s ease' }}

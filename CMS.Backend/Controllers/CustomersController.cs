@@ -22,7 +22,7 @@ namespace CMS.Backend.Controllers
             _context = context;
         }
 
-        public IActionResult Index(int page = 1, int pageSize = 10)
+        public IActionResult Index(int page = 1, int pageSize = 5)
         {
             if (page < 1) page = 1;
             // Lấy dữ liệu từ bảng Customers trong SQL kèm theo danh sách đơn đặt hàng

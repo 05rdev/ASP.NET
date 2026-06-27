@@ -31,7 +31,6 @@ function Home() {
             <ProductGrid
                 selectedCategoryId={selectedCategoryId}
             />
-
             {/* PHÂN HỆ MỚI: Sản phẩm mới nhất (Gọi API /api/Products/latest) */}
             <LatestProducts />
 

@@ -4,7 +4,7 @@ import Header from '../../components/Header';
 import Footer from '../../components/Footer';
 import postService from '../../services/postService';
 
-const IMAGE_BASE_URL = "https://localhost:7125"; // backend URL
+const IMAGE_BASE_URL = process.env.REACT_APP_IMAGE_BASE_URL;
 
 function BlogDetail() {
     const { id } = useParams();

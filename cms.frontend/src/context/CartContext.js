@@ -18,19 +18,29 @@ export function CartProvider({ children }) {
 
     /**
      * Thêm sản phẩm vào giỏ hàng.
-     * Nếu sản phẩm đã có, tăng số lượng lên 1.
+     * Kiểm tra số lượng tồn kho trước khi thêm.
      */
-    const addToCart = useCallback((product) => {
+    const addToCart = useCallback((product, qty = 1) => {
         setCartItems(prev => {
             const existed = prev.find(item => item.id === product.id);
+            const currentQty = existed ? existed.quantity : 0;
+            const newQty = currentQty + qty;
+
+            if (product.stockQuantity !== undefined && product.stockQuantity !== null) {
+                if (newQty > product.stockQuantity) {
+                    alert(`Số lượng sản phẩm trong kho không đủ! (Tồn kho: ${product.stockQuantity}, Đã có: ${currentQty})`);
+                    return prev;
+                }
+            }
+
             if (existed) {
                 return prev.map(item =>
                     item.id === product.id
-                        ? { ...item, quantity: item.quantity + 1 }
+                        ? { ...item, quantity: newQty }
                         : item
                 );
             }
-            return [...prev, { ...product, quantity: 1 }];
+            return [...prev, { ...product, quantity: qty }];
         });
     }, []);
 
@@ -39,11 +49,19 @@ export function CartProvider({ children }) {
      */
     const increaseQty = useCallback((productId) => {
         setCartItems(prev =>
-            prev.map(item =>
-                item.id === productId
-                    ? { ...item, quantity: item.quantity + 1 }
-                    : item
-            )
+            prev.map(item => {
+                if (item.id === productId) {
+                    const newQty = item.quantity + 1;
+                    if (item.stockQuantity !== undefined && item.stockQuantity !== null) {
+                        if (newQty > item.stockQuantity) {
+                            alert(`Số lượng sản phẩm trong kho không đủ! (Tối đa: ${item.stockQuantity})`);
+                            return item;
+                        }
+                    }
+                    return { ...item, quantity: newQty };
+                }
+                return item;
+            })
         );
     }, []);
 

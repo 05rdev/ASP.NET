@@ -1,6 +1,6 @@
 import React from 'react';
 
-const IMAGE_BASE_URL = "https://localhost:7125"; // đường dẫn bên Backend
+const IMAGE_BASE_URL = "http://localhost:5145"; // đường dẫn bên Backend
 //  component con nhận dữ liệu 'post' từ  component cha truyền xuống
 function PostCard({ post }) {
     return (

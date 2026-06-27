@@ -13,7 +13,7 @@ const productService = {
         try {
             // Truyền filters vào mục params để Axios tự băm thành Query String (?categoryId=1...)
             const response = await axiosClient.get('/Products', { params: filters });
-            return response.data || response;
+            return response;
         } catch (error) {
             console.error("Lỗi API getAllProducts:", error);
             throw error;

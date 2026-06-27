@@ -10,7 +10,7 @@ import authService from '../../services/authService';
 
 
 
-const IMAGE_BASE_URL = process.env.REACT_APP_IMAGE_BASE_URL || "https://localhost:7125";
+const IMAGE_BASE_URL = process.env.REACT_APP_IMAGE_BASE_URL;
 
 
 
@@ -58,11 +58,18 @@ function ProductDetail() {
 
     const handleQuantityChange = (e) => {
         const value = parseInt(e.target.value) || 1;
+        if (value > product.stockQuantity) {
+            //alert("Số lượng sản phẩm trong kho không đủ!");
+            setCartMessage({
+                type: 'warning',
+                text: 'Số lượng sản phẩm trong kho không đủ!'
+            });
+            setQuantity(product.stockQuantity);
+            return;
+        }
         // Cho phép nhập số lượng tùy ý để kích hoạt cảnh báo khi vượt kho
         const safeValue = Math.max(1, value);
         setQuantity(safeValue);
-        // Xóa thông báo cũ khi người dùng điều chỉnh lại
-        setCartMessage({ type: '', text: '' });
     };
 
 
@@ -99,12 +106,11 @@ function ProductDetail() {
             id: product.id,
             name: product.name,
             price: product.price,
-            imageUrl: product.imageUrl ? `${IMAGE_BASE_URL}${product.imageUrl}` : 'https://via.placeholder.com/200'
+            imageUrl: product.imageUrl ? `${IMAGE_BASE_URL}${product.imageUrl}` : 'https://via.placeholder.com/200',
+            stockQuantity: product.stockQuantity
         };
 
-        for (let i = 0; i < quantity; i++) {
-            addToCart(cartProduct);
-        }
+        addToCart(cartProduct, quantity);
 
         if (isBuyNow) {
             alert(`🎉 Đã thêm sản phẩm "${product.name}" vào giỏ hàng thành công! Đang chuyển hướng đến trang thanh toán...`);
@@ -210,13 +216,11 @@ function ProductDetail() {
                         </div>
 
 
-
-
-                        <p className="text-secondary mb-4 text-justify" style={{ fontSize: '15px', lineHeight: '1.6' }}>
-                            {product.description || "Mô tả sản phẩm cao cấp đang được cập nhật chi tiết từ hệ thống quản trị nội dung V.DinhCMS.GMGear..."}
-                        </p>
-
-
+                        <div
+                            className="text-secondary mb-4 text-justify"
+                            style={{ fontSize: '15px', lineHeight: '1.6' }}
+                            dangerouslySetInnerHTML={{ __html: product.description || "Mô tả sản phẩm cao cấp đang được cập nhật chi tiết từ hệ thống quản trị nội dung V.DinhCMS.GMGear..." }}
+                        />
 
 
                         <hr className="my-4" />
@@ -239,7 +243,6 @@ function ProductDetail() {
                                     type="number"
                                     className="form-control text-center font-weight-bold"
                                     min="1"
-                                    max={product.stockQuantity || 1}
                                     value={quantity}
                                     onChange={handleQuantityChange}
                                     disabled={isOutOfStock}

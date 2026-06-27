@@ -62,6 +62,14 @@ function Cart() {
             alert('Vui lòng chọn ít nhất 1 sản phẩm để thanh toán!');
             return;
         }
+
+        // Kiểm tra xem có sản phẩm nào vượt quá tồn kho không
+        const invalidItems = selectedItems.filter(item => item.stockQuantity !== undefined && item.stockQuantity !== null && item.quantity > item.stockQuantity);
+        if (invalidItems.length > 0) {
+            alert(`Không thể thanh toán do sản phẩm sau vượt quá số lượng trong kho: ${invalidItems.map(i => i.name).join(', ')}. Vui lòng điều chỉnh lại số lượng.`);
+            return;
+        }
+
         // Truyền danh sách ID sản phẩm đã chọn qua navigation state
         navigate('/checkout', { state: { selectedIds: Array.from(selectedIds) } });
     };
@@ -193,10 +201,25 @@ function Cart() {
                                                                 <button
                                                                     className="btn btn-sm"
                                                                     onClick={() => increaseQty(item.id)}
-                                                                    style={{ width: '34px', height: '34px', border: 'none', background: '#f8f9fa', fontWeight: 700, fontSize: '16px', color: '#005088' }}
+                                                                    disabled={item.stockQuantity !== undefined && item.stockQuantity !== null && item.quantity >= item.stockQuantity}
+                                                                    style={{
+                                                                        width: '34px',
+                                                                        height: '34px',
+                                                                        border: 'none',
+                                                                        background: '#f8f9fa',
+                                                                        fontWeight: 700,
+                                                                        fontSize: '16px',
+                                                                        color: (item.stockQuantity !== undefined && item.stockQuantity !== null && item.quantity >= item.stockQuantity) ? '#ccc' : '#005088',
+                                                                        cursor: (item.stockQuantity !== undefined && item.stockQuantity !== null && item.quantity >= item.stockQuantity) ? 'not-allowed' : 'pointer'
+                                                                    }}
                                                                     title="Tăng số lượng"
                                                                 >+</button>
                                                             </div>
+                                                            {item.stockQuantity !== undefined && item.stockQuantity !== null && item.quantity >= item.stockQuantity && (
+                                                                <div className="text-danger mt-1" style={{ fontSize: '11px', fontWeight: 600 }}>
+                                                                    Tối đa: {item.stockQuantity} sp
+                                                                </div>
+                                                            )}
                                                         </td>
 
                                                         {/* Thành tiền */}

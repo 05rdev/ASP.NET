@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import authService from '../services/authService';
 
-const IMAGE_BASE_URL = process.env.REACT_APP_IMAGE_BASE_URL || "https://localhost:7125";
+const IMAGE_BASE_URL = process.env.REACT_APP_IMAGE_BASE_URL;
 
 function ProductCard({ item }) {
     const { addToCart } = useCart();
@@ -33,27 +33,28 @@ function ProductCard({ item }) {
             name: item.name,
             price: item.price,
             imageUrl: IMAGE_BASE_URL + (item.imageUrl || ''),
+            stockQuantity: item.stockQuantity,
         };
         addToCart(cartProduct);
-        
+
         // Thông báo bằng hộp thoại rõ ràng thay vì overlay trên hình ảnh
         alert(`🎉 Đã thêm sản phẩm "${item.name}" vào giỏ hàng thành công!`);
     };
 
     return (
         <div className="card h-100 shadow-sm border-0 product-card-hover" style={{ borderRadius: '12px', overflow: 'hidden', transition: '0.3s' }}>
-            
+
             {/* Khối 1: Hình ảnh trang phục + Nhãn tồn kho */}
             <div className="position-relative overflow-hidden" style={{ height: '320px', backgroundColor: '#f8fafc' }}>
-                <img 
+                <img
                     src={IMAGE_BASE_URL + item.imageUrl}
-                    className="card-img-top w-100 h-100" 
+                    className="card-img-top w-100 h-100"
                     alt={item.name}
                     style={{ objectFit: 'cover', transition: 'transform 0.5s' }}
                     onMouseOver={(e) => e.target.style.transform = 'scale(1.05)'}
                     onMouseOut={(e) => e.target.style.transform = 'scale(1)'}
                 />
-                
+
                 {/* Thuật toán: Nếu tồn kho thấp (<= 5) thì đóng dấu cảnh báo */}
                 {item.stockQuantity <= 5 && (
                     <span className="badge badge-danger position-absolute px-2 py-1" style={{ top: '15px', left: '15px', borderRadius: '4px', fontSize: '11px' }}>
@@ -68,7 +69,7 @@ function ProductCard({ item }) {
                 <h6 className="card-title font-weight-bold text-dark text-truncate mb-1" title={item.name} style={{ fontSize: '16px' }}>
                     {item.name}
                 </h6>
-                
+
                 {/* Giá tiền sản phẩm */}
                 <p className="card-text font-weight-bold text-danger mb-3" style={{ fontSize: '17px' }}>
                     {formatCurrency(item.price)}
@@ -76,15 +77,15 @@ function ProductCard({ item }) {
 
                 {/* Cụm nút bấm tương tác đẩy sát đáy thẻ (mt-auto) */}
                 <div className="mt-auto pt-2 border-top d-flex justify-content-between">
-                    <Link 
-                        to={`/product/${item.id}`} 
-                        className="btn btn-sm btn-outline-primary font-weight-bold px-3 d-flex align-items-center justify-content-center" 
+                    <Link
+                        to={`/product/${item.id}`}
+                        className="btn btn-sm btn-outline-primary font-weight-bold px-3 d-flex align-items-center justify-content-center"
                         style={{ borderRadius: '20px', flexGrow: 1 }}
                     >
                         <i className="fas fa-eye mr-1"></i> Chi tiết
                     </Link>
-                    <button 
-                        className="btn btn-sm text-white font-weight-bold px-3 ml-2" 
+                    <button
+                        className="btn btn-sm text-white font-weight-bold px-3 ml-2"
                         style={{ borderRadius: '20px', backgroundColor: '#11CAA0', borderColor: '#11CAA0', flexGrow: 1 }}
                         onClick={handleAddToCart}
                     >

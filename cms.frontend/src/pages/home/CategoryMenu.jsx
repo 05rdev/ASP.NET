@@ -4,10 +4,10 @@ import categoryProductService from '../../services/categoryProductService';
 const getCategoryImage = (name) => {
     const lowercaseName = (name || '').toLowerCase();
     if (lowercaseName.includes('laptop')) {
-        return 'https://images.unsplash.com/photo-1496181130204-7552cc14ac1a?auto=format&fit=crop&w=150&h=150&q=80';
+        return 'https://photo-stal-24.zdn.vn/gr/jpg/e0c5e83abee57bbb22f4/2aOboQgVmZofKXrRblMhJ3gi618ofp4HkUsjcabQ.jpg';
     }
     if (lowercaseName.includes('link kiện điện thoại') || lowercaseName.includes('linh kiện')) {
-        return 'https://images.unsplash.com/photo-1601524909162-be87252be298?auto=format&fit=crop&w=150&h=150&q=80';
+        return 'https://photo-stal-26.zdn.vn/gr/jpg/8b9f2e6779b8bce6e5a9/2aOboQgVn4FrIXn7CKFGtRiAwLMbIlMcGDsSjHSS.jpg';
     }
     if (lowercaseName.includes('phụ kiện')) {
         return 'https://images.unsplash.com/photo-1583394838336-acd977736f90?auto=format&fit=crop&w=150&h=150&q=80';

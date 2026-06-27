@@ -4,7 +4,7 @@ import Header from '../../components/Header';
 import Footer from '../../components/Footer';
 import authService from '../../services/authService';
 
-const IMAGE_BASE_URL = "https://localhost:7125";
+const IMAGE_BASE_URL = process.env.REACT_APP_IMAGE_BASE_URL;
 
 function Profile() {
     const navigate = useNavigate();

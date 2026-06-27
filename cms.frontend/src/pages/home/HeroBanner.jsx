@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import bannerService from '../../services/bannerService';
 
-const IMAGE_BASE_URL = "https://localhost:7125";
+const IMAGE_BASE_URL = process.env.REACT_APP_IMAGE_BASE_URL;
 
 function HeroBanner() {
     const [banners, setBanners] = useState([]);

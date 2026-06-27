@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '../../context/CartContext';
 
-const IMAGE_BASE_URL = "https://localhost:7125"; // backend image URL
+const IMAGE_BASE_URL = process.env.REACT_APP_IMAGE_BASE_URL;
 
 function ProductInfo({ product }) {
     const [quantity, setQuantity] = useState(1);
@@ -11,26 +11,38 @@ function ProductInfo({ product }) {
     const [addedMsg, setAddedMsg] = useState('');
 
     const handleAddToCart = () => {
+        if (quantity > product.stockQuantity) {
+            alert("Số lượng sản phẩm trong kho không đủ!");
+            setAddedMsg("Số lượng sản phẩm trong kho không đủ!");
+            return;
+        }
         // Chuẩn hóa object đưa vào giỏ hàng
         const cartProduct = {
             id: product.id,
             name: product.name,
             price: product.price,
             imageUrl: IMAGE_BASE_URL + (product.imageUrl || ''),
+            stockQuantity: product.stockQuantity,
         };
-        for (let i = 0; i < quantity; i++) addToCart(cartProduct);
+        addToCart(cartProduct, quantity);
         setAddedMsg(`✔ Đã thêm ${quantity} sản phẩm vào giỏ hàng!`);
         setTimeout(() => setAddedMsg(''), 3000);
     };
 
     const handleBuyNow = () => {
+        if (quantity > product.stockQuantity) {
+            alert("Số lượng sản phẩm trong kho không đủ!");
+            setAddedMsg("Số lượng sản phẩm trong kho không đủ!");
+            return;
+        }
         const cartProduct = {
             id: product.id,
             name: product.name,
             price: product.price,
             imageUrl: IMAGE_BASE_URL + (product.imageUrl || ''),
+            stockQuantity: product.stockQuantity,
         };
-        for (let i = 0; i < quantity; i++) addToCart(cartProduct);
+        addToCart(cartProduct, quantity);
         navigate('/checkout');
     };
 
@@ -43,7 +55,14 @@ function ProductInfo({ product }) {
 
     const handleQuantityChange = (val) => {
         if (val < 1) return;
+        if (val > product.stockQuantity) {
+            alert("Số lượng sản phẩm trong kho không đủ!");
+            setAddedMsg("Số lượng sản phẩm trong kho không đủ!");
+            setQuantity(product.stockQuantity);
+            return;
+        }
         setQuantity(val);
+        setAddedMsg('');
     };
 
     return (
@@ -88,9 +107,11 @@ function ProductInfo({ product }) {
                         {/* Mô tả ngắn */}
                         <div className="product-description my-4">
                             <h6 className="font-weight-bold text-uppercase text-secondary mb-2" style={{ fontSize: '13px', letterSpacing: '1px' }}>Mô tả sản phẩm</h6>
-                            <p className="text-muted text-justify" style={{ fontSize: '15px', lineHeight: '1.6' }}>
-                                {product.description || "Sản phẩm công nghệ cao cấp với chất liệu tự nhiên, mềm mại, bền màu, mang đến cảm giác thoải mái khi mặc và định hình phong cách lịch lãm, hiện đại cho người dùng."}
-                            </p>
+                            <div
+                                className="text-muted text-justify"
+                                style={{ fontSize: '15px', lineHeight: '1.6' }}
+                                dangerouslySetInnerHTML={{ __html: product.description || "Sản phẩm công nghệ cao cấp với chất liệu tự nhiên, mềm mại, bền màu, mang đến cảm giác thoải mái khi mặc và định hình phong cách lịch lãm, hiện đại cho người dùng." }}
+                            />
                         </div>
                     </div>
 

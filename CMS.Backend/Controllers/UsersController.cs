@@ -87,6 +87,8 @@ namespace CMS.Backend.Controllers
                 return Conflict(new { message = "Tài khoản (Username) này đã tồn tại!" });
             }
 
+            model.PasswordHash = CMS.Backend.Services.PasswordHasher.HashPassword(model.PasswordHash);
+
             _context.Users.Add(model);
             await _context.SaveChangesAsync();
 
@@ -115,7 +117,7 @@ namespace CMS.Backend.Controllers
 
             if (!string.IsNullOrEmpty(model.PasswordHash))
             {
-                user.PasswordHash = model.PasswordHash;
+                user.PasswordHash = CMS.Backend.Services.PasswordHasher.HashPassword(model.PasswordHash);
             }
 
             _context.Users.Update(user);

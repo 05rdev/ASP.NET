@@ -36,12 +36,16 @@ namespace CMS.Backend.Controllers
         /// <param name="minPrice">Giá tối thiểu (tùy chọn)</param>
         /// <param name="maxPrice">Giá tối đa (tùy chọn)</param>
         /// <param name="keyword">Từ khóa tìm kiếm theo tên (tùy chọn)</param>
+        /// <param name="page">Số trang (tùy chọn)</param>
+        /// <param name="pageSize">Kích thước trang (tùy chọn)</param>
         [HttpGet]
         public async Task<IActionResult> GetAll(
             [FromQuery] int? categoryProductId,
             [FromQuery] decimal? minPrice,
             [FromQuery] decimal? maxPrice,
-            [FromQuery] string? keyword)
+            [FromQuery] string? keyword,
+            [FromQuery] int? page,
+            [FromQuery] int? pageSize)
         {
             try
             {
@@ -81,11 +85,36 @@ namespace CMS.Backend.Controllers
                 }
 
 
-                // Bước 3: Đẩy câu lệnh SQL hoàn chỉnh xuống SQL Server và lấy mảng kết quả sạch trả về
-                var result = await query.ToListAsync();
+                if (page.HasValue || pageSize.HasValue)
+                {
+                    int pageVal = page ?? 1;
+                    int pageSizeVal = pageSize ?? 12;
+                    if (pageVal < 1) pageVal = 1;
+                    if (pageSizeVal < 1) pageSizeVal = 12;
 
+                    int totalItems = await query.CountAsync();
+                    var data = await query
+                        .Skip((pageVal - 1) * pageSizeVal)
+                        .Take(pageSizeVal)
+                        .ToListAsync();
 
-                return Ok(result); // Trả về mã HTTP 200 kèm mảng dữ liệu JSON đã thanh lọc
+                    int totalPages = (int)System.Math.Ceiling((double)totalItems / pageSizeVal);
+
+                    return Ok(new
+                    {
+                        data = data,
+                        page = pageVal,
+                        pageSize = pageSizeVal,
+                        totalItems = totalItems,
+                        totalPages = totalPages
+                    });
+                }
+                else
+                {
+                    // Bước 3: Đẩy câu lệnh SQL hoàn chỉnh xuống SQL Server và lấy mảng kết quả sạch trả về
+                    var result = await query.ToListAsync();
+                    return Ok(result); // Trả về mã HTTP 200 kèm mảng dữ liệu JSON đã thanh lọc
+                }
             }
             catch (System.Exception ex)
             {

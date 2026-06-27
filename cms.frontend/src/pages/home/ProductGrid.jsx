@@ -2,21 +2,46 @@ import React, { useState, useEffect } from 'react';
 import productService from '../../services/productService';
 // IMPORT file thành phần component  CON VÀO ĐỂ SỬ DỤNG
 import ProductCard from '../../components/ProductCard';
+import Pagination from '../../components/Pagination';
 
 
 function ProductGrid({ selectedCategoryId }) {
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
 
+    // State Phân Trang
+    const [page, setPage] = useState(1);
+    const [pageSize] = useState(6); // Hiển thị 6 sản phẩm mỗi trang theo yêu cầu của bạn
+    const [totalPages, setTotalPages] = useState(1);
+    const [totalItems, setTotalItems] = useState(0);
+
+    // Reset trang về 1 khi chọn danh mục khác
+    useEffect(() => {
+        setPage(1);
+    }, [selectedCategoryId]);
+
 
     useEffect(() => {
         const fetchAllProducts = async () => {
             try {
                 setLoading(true);
-                const data = selectedCategoryId 
-                    ? await productService.getAllProducts({ categoryProductId: selectedCategoryId })
-                    : await productService.getAllProducts();
-                setProducts(data.data || data);
+                const params = {
+                    page: page,
+                    pageSize: pageSize
+                };
+                if (selectedCategoryId) {
+                    params.categoryProductId = selectedCategoryId;
+                }
+                const data = await productService.getAllProducts(params);
+                if (data && data.data !== undefined) {
+                    setProducts(data.data || []);
+                    setTotalPages(data.totalPages || 1);
+                    setTotalItems(data.totalItems || 0);
+                } else {
+                    setProducts(data || []);
+                    setTotalPages(1);
+                    setTotalItems(data ? data.length : 0);
+                }
             } catch (error) {
                 console.error("Lỗi hệ thống khi tải danh sách sản phẩm:", error);
             } finally {
@@ -24,7 +49,7 @@ function ProductGrid({ selectedCategoryId }) {
             }
         };
         fetchAllProducts();
-    }, [selectedCategoryId]);
+    }, [selectedCategoryId, page, pageSize]);
 
 
     if (loading) {
@@ -46,7 +71,7 @@ function ProductGrid({ selectedCategoryId }) {
                         <i className="fas fa-sparkles mr-2 text-warning"></i> Sản phẩm nổi bật
                     </h4>
                     <span className="text-muted" style={{ fontSize: '14px' }}>
-                        Hiển thị ({products.length}) sản phẩm
+                        Hiển thị ({products.length} / {totalItems}) sản phẩm
                     </span>
                 </div>
 
@@ -61,6 +86,13 @@ function ProductGrid({ selectedCategoryId }) {
                     ))}
                 </div>
 
+                {/* Thanh điều khiển phân trang */}
+                <Pagination 
+                    currentPage={page} 
+                    totalPages={totalPages} 
+                    onPageChange={setPage} 
+                    totalItems={totalItems} 
+                />
 
             </div>
         </section>

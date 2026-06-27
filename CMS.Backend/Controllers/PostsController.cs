@@ -31,11 +31,14 @@ namespace CMS.Backend.Controllers
         /// <summary>
         /// GET /api/Posts
         /// Lấy toàn bộ bài viết tin tức, sắp xếp mới nhất lên đầu
+        /// Hỗ trợ phân trang khi truyền page và pageSize
         /// </summary>
+        /// <param name="page">Số trang (tùy chọn)</param>
+        /// <param name="pageSize">Kích thước trang (tùy chọn)</param>
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll([FromQuery] int? page, [FromQuery] int? pageSize)
         {
-            var posts = await _context.Posts
+            var query = _context.Posts
                 .OrderByDescending(p => p.Id)
                 .Select(p => new {
                     p.Id,
@@ -43,30 +46,90 @@ namespace CMS.Backend.Controllers
                     p.ImageUrl,
                     p.CreatedDate,
                     CategoryName = p.Category.Name
-                })
-                .ToListAsync();
+                });
 
-            return Ok(posts);
+            if (page.HasValue || pageSize.HasValue)
+            {
+                int pageVal = page ?? 1;
+                int pageSizeVal = pageSize ?? 6;
+                if (pageVal < 1) pageVal = 1;
+                if (pageSizeVal < 1) pageSizeVal = 6;
+
+                int totalItems = await query.CountAsync();
+                var data = await query
+                    .Skip((pageVal - 1) * pageSizeVal)
+                    .Take(pageSizeVal)
+                    .ToListAsync();
+
+                int totalPages = (int)System.Math.Ceiling((double)totalItems / pageSizeVal);
+
+                return Ok(new
+                {
+                    data = data,
+                    page = pageVal,
+                    pageSize = pageSizeVal,
+                    totalItems = totalItems,
+                    totalPages = totalPages
+                });
+            }
+            else
+            {
+                var posts = await query.ToListAsync();
+                return Ok(posts);
+            }
         }
 
         /// <summary>
         /// GET /api/Posts/category/{categoryId}
         /// Lấy danh sách bài viết theo mã danh mục
+        /// Hỗ trợ phân trang khi truyền page và pageSize
         /// </summary>
+        /// <param name="categoryId">Mã danh mục</param>
+        /// <param name="page">Số trang (tùy chọn)</param>
+        /// <param name="pageSize">Kích thước trang (tùy chọn)</param>
         [HttpGet("category/{categoryId}")]
-        public async Task<IActionResult> GetByCategory(int categoryId)
+        public async Task<IActionResult> GetByCategory(int categoryId, [FromQuery] int? page, [FromQuery] int? pageSize)
         {
-            var posts = await _context.Posts
+            var query = _context.Posts
                 .Where(p => p.CategoryId == categoryId)
+                .OrderByDescending(p => p.Id)
                 .Select(p => new {
                     p.Id,
                     p.Title,
                     p.ImageUrl,
-                    p.CreatedDate
-                })
-                .ToListAsync();
+                    p.CreatedDate,
+                    CategoryName = p.Category != null ? p.Category.Name : ""
+                });
 
-            return Ok(posts);
+            if (page.HasValue || pageSize.HasValue)
+            {
+                int pageVal = page ?? 1;
+                int pageSizeVal = pageSize ?? 6;
+                if (pageVal < 1) pageVal = 1;
+                if (pageSizeVal < 1) pageSizeVal = 6;
+
+                int totalItems = await query.CountAsync();
+                var data = await query
+                    .Skip((pageVal - 1) * pageSizeVal)
+                    .Take(pageSizeVal)
+                    .ToListAsync();
+
+                int totalPages = (int)System.Math.Ceiling((double)totalItems / pageSizeVal);
+
+                return Ok(new
+                {
+                    data = data,
+                    page = pageVal,
+                    pageSize = pageSizeVal,
+                    totalItems = totalItems,
+                    totalPages = totalPages
+                });
+            }
+            else
+            {
+                var posts = await query.ToListAsync();
+                return Ok(posts);
+            }
         }
 
         /// <summary>

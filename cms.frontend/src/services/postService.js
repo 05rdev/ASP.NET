@@ -6,13 +6,13 @@ const postService = {
      * 1. Lấy danh sách toàn bộ bài viết tin tức từ Backend
      * API Endpoint: GET https://localhost:xxxx/api/Posts (hoặc /api/Blogs tùy cấu hình Backend)
      */
-    getAllPosts: async () => {
+    getAllPosts: async (params = {}) => {
         try {
             // Thực hiện gọi API GET qua axiosClient
-            const response = await axiosClient.get('/Posts');
+            const response = await axiosClient.get('/Posts', { params });
 
-            // Trả về dữ liệu mảng bài viết (thường nằm trong response.data hoặc trực tiếp response tùy cấu hình client)
-            return response.data || response;
+            // Trả về dữ liệu phản hồi đầy đủ để giữ metadata
+            return response;
         } catch (error) {
             console.error("Lỗi API getAllBlogs:", error);
             throw error; // Đẩy lỗi ra ngoài để Component nhận biết và xử lý UI (như tắt loading, hiện thông báo lỗi)

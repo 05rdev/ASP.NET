@@ -61,6 +61,12 @@ namespace CMS.Backend.Controllers
                 return View(model);
             }
 
+            // Mã hóa mật khẩu trước khi lưu DB
+            if (!string.IsNullOrEmpty(model.PasswordHash))
+            {
+                model.PasswordHash = CMS.Backend.Services.PasswordHasher.HashPassword(model.PasswordHash);
+            }
+
             // Lưu User mới vào Database
             _context.Users.Add(model);
             _context.SaveChanges();
@@ -90,7 +96,7 @@ namespace CMS.Backend.Controllers
             // 2. Xử lý mật khẩu: Nếu nhập mới thì lấy cái mới, nếu trống thì lấy cái cũ
             if (!string.IsNullOrEmpty(NewPassword))
             {
-                model.PasswordHash = NewPassword; // Sau này sẽ mã hóa tại đây
+                model.PasswordHash = CMS.Backend.Services.PasswordHasher.HashPassword(NewPassword);
             }
             else
             {
