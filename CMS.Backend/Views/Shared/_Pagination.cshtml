@@ -1,0 +1,71 @@
+@{
+    int currentPage = ViewBag.CurrentPage ?? 1;
+    int totalPages = ViewBag.TotalPages ?? 1;
+    int pageSize = ViewBag.PageSize ?? 10;
+    int totalItems = ViewBag.TotalItems ?? 0;
+
+    int startItem = totalItems == 0 ? 0 : (currentPage - 1) * pageSize + 1;
+    int endItem = Math.Min(currentPage * pageSize, totalItems);
+
+    var routeData = ViewContext.RouteData.Values;
+    string controller = routeData["controller"]?.ToString() ?? "";
+    string action = routeData["action"]?.ToString() ?? "Index";
+}
+
+@if (totalPages > 1)
+{
+    <div class="card-footer bg-white py-3 border-top d-flex flex-column flex-md-row justify-content-between align-items-center gap-3">
+        <div class="text-muted small">
+            Hiển thị từ <span class="fw-semibold text-dark">@startItem</span> đến <span class="fw-semibold text-dark">@endItem</span> trong tổng số <span class="fw-semibold text-dark">@totalItems</span> kết quả
+        </div>
+        <nav aria-label="Page navigation">
+            <ul class="pagination pagination-sm mb-0">
+                @* First Page *@
+                <li class="page-item @(currentPage == 1 ? "disabled" : "")">
+                    <a class="page-link rounded-3 me-1" href="@Url.Action(action, controller, new { page = 1, pageSize = pageSize })" aria-label="First">
+                        <span aria-hidden="true">&laquo;&laquo;</span>
+                    </a>
+                </li>
+                @* Previous Page *@
+                <li class="page-item @(currentPage == 1 ? "disabled" : "")">
+                    <a class="page-link rounded-3 me-1" href="@Url.Action(action, controller, new { page = currentPage - 1, pageSize = pageSize })" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+
+                @* Page Numbers *@
+                @{
+                    int startPage = Math.Max(1, currentPage - 2);
+                    int endPage = Math.Min(totalPages, currentPage + 2);
+                    if (startPage > 1)
+                    {
+                        <li class="page-item disabled me-1"><span class="page-link border-0">...</span></li>
+                    }
+                    for (int i = startPage; i <= endPage; i++)
+                    {
+                        <li class="page-item @(currentPage == i ? "active" : "") me-1">
+                            <a class="page-link rounded-3" href="@Url.Action(action, controller, new { page = i, pageSize = pageSize })">@i</a>
+                        </li>
+                    }
+                    if (endPage < totalPages)
+                    {
+                        <li class="page-item disabled me-1"><span class="page-link border-0">...</span></li>
+                    }
+                }
+
+                @* Next Page *@
+                <li class="page-item @(currentPage == totalPages ? "disabled" : "") me-1">
+                    <a class="page-link rounded-3" href="@Url.Action(action, controller, new { page = currentPage + 1, pageSize = pageSize })" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+                @* Last Page *@
+                <li class="page-item @(currentPage == totalPages ? "disabled" : "")">
+                    <a class="page-link rounded-3" href="@Url.Action(action, controller, new { page = totalPages, pageSize = pageSize })" aria-label="Last">
+                        <span aria-hidden="true">&raquo;&raquo;</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+}

@@ -1,8 +1,9 @@
 import axios from 'axios';
 
-// Khởi tạo một thực thể axios với cấu hình base chung
+// Đọc API Base URL từ file .env (REACT_APP_API_URL)
+// Không viết cứng (hardcode) domain Backend theo chuẩn cấu trúc doanh nghiệp
 const axiosClient = axios.create({
-    baseURL: 'https://localhost:7125/api',
+    baseURL: process.env.REACT_APP_API_URL || 'https://localhost:7125/api',
     headers: {
         'Content-Type': 'application/json',
     },

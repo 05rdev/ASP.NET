@@ -17,6 +17,7 @@ import Checkout from './pages/checkout/index';
 import Register from './pages/auth/Register';
 import Login from './pages/auth/Login';
 import About from './pages/about/index';
+import Profile from './pages/profile/index';
 
 
 function App() {
@@ -45,6 +46,7 @@ function App() {
                             {/* Phân hệ tài khoản khách hàng */}
                             <Route path="/register" element={<Register />} />
                             <Route path="/login" element={<Login />} />
+                            <Route path="/profile" element={<Profile />} />
 
                             {/* Giới thiệu */}
                             <Route path="/about" element={<About />} />

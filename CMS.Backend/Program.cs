@@ -7,6 +7,7 @@
 using CMS.Data;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,9 +16,28 @@ var builder = WebApplication.CreateBuilder(args);
 // ==============================================================
 builder.Services.AddControllersWithViews(); // Lệnh này vừa nhận diện các API mới, vừa giữ quyền biên dịch các View (.cshtml) của Web MVC cũ.
 
+// Đăng ký dịch vụ gửi Email qua SMTP Gmail
+builder.Services.AddSingleton<CMS.Backend.Services.EmailService>();
+
 // Đăng ký dịch vụ lõi giúp hệ thống tự động bóc tách thông tin Endpoint phục vụ Swagger
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(); // -- Kích hoạt bộ sinh tài liệu API Swagger
+builder.Services.AddSwaggerGen(options =>
+{
+    options.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Version = "v1",
+        Title = "Huynh Van Dinh CMS Web API",
+        Description = "Hệ thống API đầy đủ của ứng dụng Quản lý Nội dung (CMS) và Thương mại Điện tử",
+        Contact = new OpenApiContact
+        {
+            Name = "Huỳnh Văn Định",
+            Email = "support@vandinhcms.retail"
+        }
+    });
+
+    var xmlFilename = $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
+});
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));

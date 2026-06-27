@@ -24,9 +24,21 @@ namespace CMS.Backend.Controllers
             _context = context;
         }
 
-        public IActionResult Index()
+        public IActionResult Index(int page = 1, int pageSize = 10)
         {
-            var data = _context.Banners.OrderBy(b => b.Order).ToList();
+            if (page < 1) page = 1;
+            var query = _context.Banners.OrderBy(b => b.Order);
+            int totalItems = query.Count();
+            var data = query
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
+
+            ViewBag.CurrentPage = page;
+            ViewBag.PageSize = pageSize;
+            ViewBag.TotalPages = (int)System.Math.Ceiling((double)totalItems / pageSize);
+            ViewBag.TotalItems = totalItems;
+
             return View(data);
         }
 

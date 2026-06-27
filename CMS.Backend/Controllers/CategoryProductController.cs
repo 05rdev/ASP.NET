@@ -21,12 +21,21 @@ namespace CMS.Backend.Controllers
             _context = context;
         }
 
-        public IActionResult Index()
+        public IActionResult Index(int page = 1, int pageSize = 10)
         {
+            if (page < 1) page = 1;
             // Sử dụng .Include(c => c.Products) để nạp kèm danh sách sản phẩm
-            var data = _context.CategoriesProducts
-                               .Include(c => c.Products)
-                               .ToList();
+            var query = _context.CategoriesProducts.Include(c => c.Products);
+            int totalItems = query.Count();
+            var data = query
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
+
+            ViewBag.CurrentPage = page;
+            ViewBag.PageSize = pageSize;
+            ViewBag.TotalPages = (int)System.Math.Ceiling((double)totalItems / pageSize);
+            ViewBag.TotalItems = totalItems;
 
             return View(data);
         }

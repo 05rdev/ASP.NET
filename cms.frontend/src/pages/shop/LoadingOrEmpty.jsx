@@ -29,7 +29,7 @@ function LoadingOrEmpty({ isLoading, totalItems, children }) {
                     style={{ width: '120px', opacity: 0.5 }}
                     className="mb-3"
                 />
-                <h5 className="font-weight-bold text-secondary">RẤT TIẾC, KHÔNG CÓ SẢN PHẨM PHÙ HỢP</h5>
+                <h5 className="font-weight-bold text-secondary">Không tìm thấy sản phẩm nào phù hợp với tiêu chí của bạn</h5>
                 <p className="text-muted small">Vui lòng nới rộng khoảng giá hoặc kiểm tra lại từ khóa tìm kiếm của bạn.</p>
             </div>
         );

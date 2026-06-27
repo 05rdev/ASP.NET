@@ -22,10 +22,22 @@ namespace CMS.Backend.Controllers
             _context = context;
         }
 
-        public IActionResult Index()
+        public IActionResult Index(int page = 1, int pageSize = 10)
         {
+            if (page < 1) page = 1;
             // Lấy dữ liệu từ bảng Customers trong SQL kèm theo danh sách đơn đặt hàng
-            var data = _context.Customers.Include(c => c.Orders).ToList();
+            var query = _context.Customers.Include(c => c.Orders);
+            int totalItems = query.Count();
+            var data = query
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
+
+            ViewBag.CurrentPage = page;
+            ViewBag.PageSize = pageSize;
+            ViewBag.TotalPages = (int)System.Math.Ceiling((double)totalItems / pageSize);
+            ViewBag.TotalItems = totalItems;
+
             return View(data);
         }
 

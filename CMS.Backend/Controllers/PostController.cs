@@ -26,21 +26,28 @@ namespace CMS.Backend.Controllers
         }
 
         // Tham số 'id' được truyền vào từ URL (ví dụ: /Post/Index/5)
-        public IActionResult Index(int? id)
+        public IActionResult Index(int? id, int page = 1, int pageSize = 6)
         {
-            // 1. Kiểm tra nếu không có id truyền vào thì trả về lỗi hoặc toàn bộ bài viết
-            //if (id == null)
-            //{
-            //    return BadRequest("Vui lòng cung cấp mã danh mục.");
-            //}
+            if (page < 1) page = 1;
+            var query = _context.Posts.Include(p => p.Category).AsQueryable();
 
-            // 2. Sử dụng LINQ với tham số 'id' linh hoạt
-            var posts = _context.Posts
-                        .Include(p => p.Category)
+            if (id.HasValue)
+            {
+                query = query.Where(p => p.CategoryId == id.Value);
+            }
+
+            int totalItems = query.Count();
+            var posts = query
+                        .Skip((page - 1) * pageSize)
+                        .Take(pageSize)
                         .ToList();
 
+            ViewBag.CurrentPage = page;
+            ViewBag.PageSize = pageSize;
+            ViewBag.TotalPages = (int)System.Math.Ceiling((double)totalItems / pageSize);
+            ViewBag.TotalItems = totalItems;
 
-            // 3. Truyền dữ liệu ra View
+            // Truyền dữ liệu ra View
             return View(posts);
         }
 

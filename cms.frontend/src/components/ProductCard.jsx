@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import authService from '../services/authService';
 
-const IMAGE_BASE_URL = "https://localhost:7125"; // đường dẫn bên Backend
+const IMAGE_BASE_URL = process.env.REACT_APP_IMAGE_BASE_URL || "https://localhost:7125";
 
 function ProductCard({ item }) {
     const { addToCart } = useCart();

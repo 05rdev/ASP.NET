@@ -9,9 +9,16 @@ function Header() {
     const { totalItems } = useCart();
     const customer = authService.getCustomer();
 
+    const [searchTerm, setSearchTerm] = React.useState('');
+
     const handleSearchSubmit = (e) => {
         e.preventDefault();
-        alert("Chức năng tìm kiếm nhanh trên Header sẽ kết nối API Search ở các buổi sau!");
+        navigate(`/shop?keyword=${encodeURIComponent(searchTerm)}`);
+    };
+
+    const handleSearchChange = (val) => {
+        setSearchTerm(val);
+        navigate(`/shop?keyword=${encodeURIComponent(val)}`);
     };
 
     const handleLogout = () => {
@@ -45,10 +52,10 @@ function Header() {
                         {customer ? (
                             // Đã đăng nhập → Hiển thị tên + nút đăng xuất
                             <>
-                                <span className="text-white mr-3" style={{ fontSize: '13px' }}>
-                                    <i className="fas fa-user-check mr-1" style={{ color: '#11CAA0' }}></i>
-                                    Xin chào, <strong>{customer.fullName.split(' ').pop()}</strong>
-                                </span>
+                                <Link to="/profile" className="text-white mr-3 text-decoration-none hover-opacity" style={{ fontSize: '13px', transition: 'opacity 0.2s' }}>
+                                    <i className="fas fa-user-circle mr-1" style={{ color: '#11CAA0' }}></i>
+                                    Tài khoản: <strong>{customer.fullName.split(' ').pop()}</strong>
+                                </Link>
                                 <button
                                     onClick={handleLogout}
                                     className="btn btn-sm text-white"
@@ -98,6 +105,8 @@ function Header() {
                                     className="form-control border-right-0"
                                     placeholder="Tìm kiếm mẫu đầm dạ hội, sơ mi công sở..."
                                     style={{ borderRadius: '20px 0 0 20px', fontSize: '14px' }}
+                                    value={searchTerm}
+                                    onChange={(e) => handleSearchChange(e.target.value)}
                                 />
                                 <div className="input-group-append">
                                     <button

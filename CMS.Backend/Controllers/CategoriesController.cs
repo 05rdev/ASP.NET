@@ -6,54 +6,50 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using CMS.Data;
+using CMS.Data.Entities;
 using System.Threading.Tasks;
 using System.Linq;
 
 namespace CMS.Backend.Controllers
 {
-    // 1. Cấu hình đường dẫn API: api/Categories
+    /// <summary>
+    /// API Quản lý Danh mục bài viết tin tức
+    /// Base URL: /api/Categories
+    /// </summary>
     [Route("api/[controller]")]
-
-    // 2. Kích hoạt tính năng tự động kiểm tra lỗi dữ liệu (Validation)
     [ApiController]
-
-    // 3. Kế thừa ControllerBase để tối ưu bộ nhớ cho API thuần dữ liệu JSON
     public class CategoriesController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
 
-        // 4. Hàm khởi tạo: Nạp cơ sở dữ liệu SQL Server vào Controller thông qua DI
+        // Hàm khởi tạo: Nạp cơ sở dữ liệu SQL Server vào Controller thông qua DI
         public CategoriesController(ApplicationDbContext context)
         {
             _context = context;
         }
 
         /// <summary>
-        /// API lấy toàn bộ danh mục bài viết tin tức (Giao thức GET)
-        /// Đường dẫn gọi dữ liệu: GET https://localhost:xxxx/api/Categories
+        /// GET /api/Categories
+        /// Lấy toàn bộ danh mục bài viết tin tức
         /// </summary>
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
             try
             {
-                // Bước A: Quét bảng dữ liệu Categories từ SQL Server lên
                 var categories = await _context.Categories
-                    .OrderBy(c => c.Id) // Sắp xếp theo mã ID tăng dần
+                    .OrderBy(c => c.Id)
                     .Select(c => new {
-                        // Bước B: Kỹ thuật gọt tỉa (Projection) - chỉ lấy các trường cần thiết ra FrontEnd
                         c.Id,
                         c.Name,
                         c.Description
                     })
-                    .ToListAsync(); // Chuyển đổi bất đồng bộ sang danh sách
+                    .ToListAsync();
 
-                // Bước C: Trả về mã thành công HTTP 200 OK đính kèm chuỗi JSON sạch
                 return Ok(categories);
             }
             catch (System.Exception ex)
             {
-                // Bảo vệ hệ thống: Trả về lỗi 500 kèm thông tin chi tiết
                 return StatusCode(500, new { 
                     message = "Lỗi kết nối cơ sở dữ liệu hệ thống", 
                     detail = ex.Message 
@@ -62,15 +58,14 @@ namespace CMS.Backend.Controllers
         }
 
         /// <summary>
-        /// API lấy thông tin chi tiết của một danh mục bài viết theo ID
-        /// Đường dẫn gọi dữ liệu: GET https://localhost:xxxx/api/Categories/{id}
+        /// GET /api/Categories/{id}
+        /// Lấy thông tin chi tiết của một danh mục bài viết theo ID
         /// </summary>
         [HttpGet("{id}")]
         public async Task<IActionResult> GetDetail(int id)
         {
             try
             {
-                // Tìm kiếm danh mục trong Database theo ID
                 var category = await _context.Categories
                     .Select(c => new {
                         c.Id,
@@ -79,7 +74,6 @@ namespace CMS.Backend.Controllers
                     })
                     .FirstOrDefaultAsync(c => c.Id == id);
 
-                // Xử lý kịch bản không tìm thấy ID
                 if (category == null)
                 {
                     return NotFound(new { message = "Không tìm thấy danh mục bài viết này trong hệ thống" });
@@ -94,6 +88,70 @@ namespace CMS.Backend.Controllers
                     detail = ex.Message 
                 });
             }
+        }
+
+        /// <summary>
+        /// POST /api/Categories
+        /// Thêm danh mục bài viết mới
+        /// </summary>
+        [HttpPost]
+        public async Task<IActionResult> Create([FromBody] Category model)
+        {
+            if (model == null || string.IsNullOrWhiteSpace(model.Name))
+                return BadRequest(new { message = "Tên danh mục không được để trống" });
+
+            var checkExist = await _context.Categories.AnyAsync(c => c.Name == model.Name);
+            if (checkExist)
+                return Conflict(new { message = "Tên danh mục này đã tồn tại!" });
+
+            _context.Categories.Add(model);
+            await _context.SaveChangesAsync();
+
+            return StatusCode(201, new { message = "Thêm danh mục thành công!", id = model.Id });
+        }
+
+        /// <summary>
+        /// PUT /api/Categories/{id}
+        /// Cập nhật thông tin danh mục bài viết theo ID
+        /// </summary>
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Update(int id, [FromBody] Category model)
+        {
+            if (id != model.Id)
+                return BadRequest(new { message = "ID không trùng khớp" });
+
+            var category = await _context.Categories.FindAsync(id);
+            if (category == null)
+                return NotFound(new { message = "Không tìm thấy danh mục" });
+
+            var nameExists = await _context.Categories.AnyAsync(c => c.Name == model.Name && c.Id != id);
+            if (nameExists)
+                return Conflict(new { message = "Tên danh mục đã được sử dụng" });
+
+            category.Name = model.Name;
+            category.Description = model.Description;
+
+            _context.Categories.Update(category);
+            await _context.SaveChangesAsync();
+
+            return Ok(new { message = "Cập nhật danh mục thành công!" });
+        }
+
+        /// <summary>
+        /// DELETE /api/Categories/{id}
+        /// Xóa danh mục bài viết theo ID
+        /// </summary>
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var category = await _context.Categories.FindAsync(id);
+            if (category == null)
+                return NotFound(new { message = "Không tìm thấy danh mục" });
+
+            _context.Categories.Remove(category);
+            await _context.SaveChangesAsync();
+
+            return Ok(new { message = "Xóa danh mục thành công!" });
         }
     }
 }

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import productService from '../../services/productService';
 import ShopSidebar from './ShopSidebar';
 import ShopHeader from './ShopHeader';
@@ -11,6 +12,9 @@ import Header from '../../components/Header';
 
 
 function Shop() {
+    const [searchParams] = useSearchParams();
+    const urlKeyword = searchParams.get('keyword') || '';
+
     // State 1: Lưu trữ mảng danh sách sản phẩm đổ ra giao diện
     const [products, setProducts] = useState([]);
 
@@ -26,8 +30,16 @@ function Shop() {
         categoryProductId: null,   // Mặc định null là lấy tất cả danh mục
         minPrice: '',       // Để trống nghĩa là không giới hạn sàn giá
         maxPrice: '',       // Để trống nghĩa là không giới hạn trần giá
-        keyword: ''         // Từ khóa tìm kiếm rỗng
+        keyword: urlKeyword         // Từ khóa tìm kiếm từ URL
     });
+
+    // Đồng bộ từ khóa tìm kiếm khi URL thay đổi
+    useEffect(() => {
+        setFilters(prev => ({
+            ...prev,
+            keyword: urlKeyword
+        }));
+    }, [urlKeyword]);
 
 
 

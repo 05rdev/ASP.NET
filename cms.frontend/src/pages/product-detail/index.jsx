@@ -10,7 +10,7 @@ import authService from '../../services/authService';
 
 
 
-const IMAGE_BASE_URL = "https://localhost:7125"; // Cổng Port chạy ngầm của Backend C#
+const IMAGE_BASE_URL = process.env.REACT_APP_IMAGE_BASE_URL || "https://localhost:7125";
 
 
 
@@ -56,12 +56,10 @@ function ProductDetail() {
     };
 
 
-    // Hàm xử lý thay đổi số lượng — giới hạn trong khoảng [1, stockQuantity]
     const handleQuantityChange = (e) => {
         const value = parseInt(e.target.value) || 1;
-        const maxQty = product?.stockQuantity || 1;
-        // Ép giá trị nằm trong khoảng hợp lệ [1, tồn kho]
-        const safeValue = Math.max(1, Math.min(value, maxQty));
+        // Cho phép nhập số lượng tùy ý để kích hoạt cảnh báo khi vượt kho
+        const safeValue = Math.max(1, value);
         setQuantity(safeValue);
         // Xóa thông báo cũ khi người dùng điều chỉnh lại
         setCartMessage({ type: '', text: '' });
@@ -87,10 +85,11 @@ function ProductDetail() {
 
         // Thực hiện so sánh toán học trực tiếp giữa ô chọn mua với cột tồn kho thực tế
         if (quantity > product.stockQuantity) {
-            // Nếu vượt kho -> Chặn lại lập tức, hiển thị cảnh báo inline
+            // Nếu vượt kho -> Chặn lại lập tức, hiển thị cảnh báo inline và alert
+            alert("Số lượng sản phẩm trong kho không đủ!");
             setCartMessage({
                 type: 'warning',
-                text: `Số lượng bạn chọn (${quantity}) vượt quá số lượng còn lại trong kho (${product.stockQuantity} chiếc). Vui lòng giảm số lượng!`
+                text: 'Số lượng sản phẩm trong kho không đủ!'
             });
             return; // Ngắt hàm, không cho chạy xuống lệnh nạp giỏ hàng bên dưới
         }
