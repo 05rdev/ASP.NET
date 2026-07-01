@@ -25,7 +25,7 @@ function Shop() {
 
     // State Phân Trang
     const [page, setPage] = useState(1);
-    const [pageSize] = useState(5); // Hiển thị 5 sản phẩm trên 1 trang theo yêu cầu của bạn
+    const [pageSize] = useState(6); // Hiển thị 6 sản phẩm trên 1 trang 
     const [totalPages, setTotalPages] = useState(1);
     const [totalItems, setTotalItems] = useState(0);
 
@@ -68,7 +68,7 @@ function Shop() {
 
                 // Gửi cụm đối tượng filters xuống API Backend C#
                 const response = await productService.getAllProducts(cleanFilters);
-                
+
                 if (response && response.data !== undefined) {
                     setProducts(response.data || []);
                     setTotalPages(response.totalPages || 1);
@@ -147,15 +147,15 @@ function Shop() {
 
                         {/* Kiểm soát UX qua LoadingOrEmpty trước khi render danh sách */}
                         <LoadingOrEmpty isLoading={isLoading} totalItems={totalItems}>
-                             <ProductList products={products} /> 
-                             
-                             {/* Thêm điều khiển phân trang */}
-                             <Pagination 
-                                 currentPage={page} 
-                                 totalPages={totalPages} 
-                                 onPageChange={setPage} 
-                                 totalItems={totalItems} 
-                             />
+                            <ProductList products={products} />
+
+                            {/* Thêm điều khiển phân trang */}
+                            <Pagination
+                                currentPage={page}
+                                totalPages={totalPages}
+                                onPageChange={setPage}
+                                totalItems={totalItems}
+                            />
                         </LoadingOrEmpty>
                     </main>
                 </div>

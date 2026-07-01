@@ -26,7 +26,7 @@ namespace CMS.Backend.Controllers
         }
 
         // Tham số 'id' được truyền vào từ URL (ví dụ: /Post/Index/5)
-        public IActionResult Index(int? id, int page = 1, int pageSize = 3)
+        public IActionResult Index(int? id, int page = 1, int pageSize = 6)
         {
             if (page < 1) page = 1;
             var query = _context.Posts.Include(p => p.Category).AsQueryable();

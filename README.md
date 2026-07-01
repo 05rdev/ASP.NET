@@ -48,15 +48,15 @@ HuynhVanDinhCMS_Solution/
 │   Admin Dashboard    │         Trang công khai              │
 │   (Razor MVC Views)  │         (React.js SPA)               │
 ├──────────────────────┴──────────────────────────────────────┤
-│                    ASP.NET Core 8.0                          │
+│                    ASP.NET Core 8.0                         │
 ├──────────────────────┬──────────────────────────────────────┤
 │   MVC Controllers    │         API Controllers              │
 │   (Server-rendered)  │         (RESTful JSON)               │
 ├──────────────────────┴──────────────────────────────────────┤
 │              Entity Framework Core 8.0                      │
 ├─────────────────────────────────────────────────────────────┤
-│                  SQL Server Database                         │
-│                  (VanDinhCMS_DB)                             │
+│                  SQL Server Database                        │
+│                  (VanDinhCMS_DB)                            │
 └─────────────────────────────────────────────────────────────┘
 ```
 
@@ -127,6 +127,17 @@ HuynhVanDinhCMS_Solution/
 │ Phone        │     │ Status       │     │ Quantity     │
 │ Address      │     │ Notes        │     │ UnitPrice    │
 │ Password     │     └──────────────┘     └──────────────┘
+└──────────────┘
+
+┌──────────────┐
+│    Banner    │
+├──────────────┤
+│ Id (PK)      │
+│ Title        │
+│ Description  │
+│ ImageUrl     │
+│ IsActive     │
+│ DisplayOrder │
 └──────────────┘
 ```
 
@@ -203,7 +214,15 @@ HuynhVanDinhCMS_Solution/
 | `ProductId` | int (FK) | Liên kết tới `Products` |
 | `Quantity` | int | Số lượng mua |
 | `UnitPrice` | decimal(18,2) | Giá tại thời điểm mua |
-
+#### 9.`Banner`
+| Cột | Kiểu | Mô tả |
+|---|---|---|
+| `Id` | int (PK) | Mã banner |
+| `Title` | string (max 200) | Tiêu đề banner |
+| `Description` | string? | Mô tả banner |
+| `ImageUrl` | string? | Ảnh banner |
+| `IsActive` | bool | Trạng thái banner |
+| `DisplayOrder` | int | Thứ tự hiển thị |
 ---
 
 ## 🔐 Hệ Thống Xác Thực & Phân Quyền
@@ -231,17 +250,371 @@ HuynhVanDinhCMS_Solution/
 
 API được thiết kế để phục vụ Frontend React.js, tài liệu API có thể truy cập qua **Swagger UI** tại `/swagger`.
 
-### Endpoints
+> **Base URL:** `https://localhost:{port}`  
+> **CORS:** Cho phép mọi nguồn (`AllowAnyOrigin`, `AllowAnyMethod`, `AllowAnyHeader`)
 
-#### Posts API (`/api/posts`)
-| Method | Endpoint | Mô tả |
+---
+
+### 🔐 Auth API (`/api/Auth`)
+*Xác thực tài khoản khách hàng mua sắm (không phải Admin)*
+
+| Method | Endpoint | Mô tả | Auth |
+|---|---|---|---|
+| `POST` | `/api/Auth/register` | Đăng ký tài khoản khách hàng mới | ❌ |
+| `POST` | `/api/Auth/login` | Đăng nhập tài khoản khách hàng | ❌ |
+| `GET` | `/api/Auth/profile/{id}` | Lấy thông tin cá nhân của khách hàng | ❌ |
+| `PUT` | `/api/Auth/profile/{id}` | Cập nhật thông tin cá nhân khách hàng | ❌ |
+| `POST` | `/api/Auth/forgot-password` | Quên mật khẩu — tạo mật khẩu mới & **gửi Email** | ❌ |
+
+#### Request Body — `POST /api/Auth/register`
+```json
+{
+  "fullName": "Nguyễn Văn A",
+  "email": "nguyenvana@gmail.com",
+  "password": "matkhau123",
+  "phone": "0901234567",
+  "address": "123 Lê Lợi, TP.HCM"
+}
+```
+
+#### Request Body — `POST /api/Auth/login`
+```json
+{
+  "email": "nguyenvana@gmail.com",
+  "password": "matkhau123"
+}
+```
+
+#### Request Body — `PUT /api/Auth/profile/{id}`
+```json
+{
+  "fullName": "Nguyễn Văn A",
+  "email": "nguyenvana@gmail.com",
+  "phone": "0901234567",
+  "address": "123 Lê Lợi, TP.HCM",
+  "password": "matkhaumoi456"
+}
+```
+
+#### Request Body — `POST /api/Auth/forgot-password`
+```json
+{
+  "email": "nguyenvana@gmail.com"
+}
+```
+> **📧 Email tự động:** Sau khi gọi endpoint này, hệ thống tạo mật khẩu ngẫu nhiên 8 ký tự, cập nhật vào Database (đã mã hóa SHA256+Salt) và gửi email **"🔑 Khôi phục mật khẩu"** tới địa chỉ email đã đăng ký.
+
+#### Response — Đăng nhập/Đăng ký thành công
+```json
+{
+  "message": "Đăng nhập thành công!",
+  "id": 1,
+  "fullName": "Nguyễn Văn A",
+  "email": "nguyenvana@gmail.com",
+  "phone": "0901234567",
+  "address": "123 Lê Lợi, TP.HCM"
+}
+```
+
+---
+
+### 📝 Posts API (`/api/Posts`)
+*Quản lý bài viết tin tức — hỗ trợ phân trang*
+
+| Method | Endpoint | Mô tả | Auth |
+|---|---|---|---|
+| `GET` | `/api/Posts` | Lấy toàn bộ bài viết (sắp xếp mới nhất) | ❌ |
+| `GET` | `/api/Posts?page=1&pageSize=6` | Lấy bài viết có phân trang | ❌ |
+| `GET` | `/api/Posts/{id}` | Lấy chi tiết một bài viết theo ID (bao gồm Content HTML) | ❌ |
+| `GET` | `/api/Posts/category/{categoryId}` | Lấy bài viết theo danh mục | ❌ |
+| `GET` | `/api/Posts/category/{categoryId}?page=1&pageSize=6` | Lấy bài viết theo danh mục + phân trang | ❌ |
+| `POST` | `/api/Posts` | Thêm bài viết mới | ❌ |
+| `PUT` | `/api/Posts/{id}` | Cập nhật bài viết theo ID | ❌ |
+| `DELETE` | `/api/Posts/{id}` | Xóa bài viết theo ID | ❌ |
+
+#### Query Parameters — `GET /api/Posts`
+| Tham số | Kiểu | Mô tả |
 |---|---|---|
-| `GET` | `/api/posts` | Lấy toàn bộ bài viết (sắp xếp mới nhất) |
-| `GET` | `/api/posts/{id}` | Lấy chi tiết một bài viết theo ID |
-| `GET` | `/api/posts/category/{categoryId}` | Lấy bài viết theo danh mục |
+| `page` | int | Số trang (mặc định: không phân trang) |
+| `pageSize` | int | Số bài viết mỗi trang (mặc định: 6) |
 
-### Cấu Hình CORS
-API được cấu hình **CORS** cho phép mọi nguồn truy cập (`AllowAnyOrigin`, `AllowAnyMethod`, `AllowAnyHeader`), hỗ trợ Frontend React gọi API từ domain khác.
+#### Response — Khi có phân trang
+```json
+{
+  "data": [...],
+  "page": 1,
+  "pageSize": 6,
+  "totalItems": 20,
+  "totalPages": 4
+}
+```
+
+#### Request Body — `POST /api/Posts`
+```json
+{
+  "title": "Tiêu đề bài viết",
+  "content": "<p>Nội dung HTML...</p>",
+  "imageUrl": "/uploads/abc.jpg",
+  "categoryId": 1
+}
+```
+
+---
+
+### 🛍️ Products API (`/api/Products`)
+*Quản lý sản phẩm thương mại điện tử — hỗ trợ lọc động và phân trang*
+
+| Method | Endpoint | Mô tả | Auth |
+|---|---|---|---|
+| `GET` | `/api/Products` | Lấy danh sách sản phẩm (có thể lọc nhiều tiêu chí) | ❌ |
+| `GET` | `/api/Products/{id}` | Lấy chi tiết một sản phẩm theo ID | ❌ |
+| `GET` | `/api/Products/categoryproduct/{categoryProductId}` | Lấy sản phẩm theo danh mục sản phẩm | ❌ |
+| `GET` | `/api/Products/latest` | Lấy 3 sản phẩm mới nhất (theo ID giảm dần) | ❌ |
+| `GET` | `/api/Products/hot` | Lấy 3 sản phẩm hot/bán chạy (theo giá cao nhất) | ❌ |
+| `POST` | `/api/Products` | Thêm sản phẩm mới vào hệ thống | ❌ |
+| `PUT` | `/api/Products/{id}` | Cập nhật thông tin sản phẩm theo ID | ❌ |
+| `DELETE` | `/api/Products/{id}` | Xóa sản phẩm theo ID | ❌ |
+
+#### Query Parameters — `GET /api/Products`
+| Tham số | Kiểu | Mô tả |
+|---|---|---|
+| `categoryProductId` | int | Lọc theo mã danh mục sản phẩm |
+| `minPrice` | decimal | Lọc giá tối thiểu |
+| `maxPrice` | decimal | Lọc giá tối đa |
+| `keyword` | string | Tìm kiếm theo tên sản phẩm (LIKE `%keyword%`) |
+| `page` | int | Số trang (mặc định: 1) |
+| `pageSize` | int | Số sản phẩm mỗi trang (mặc định: 12) |
+
+#### Ví dụ lọc sản phẩm nâng cao
+```
+GET /api/Products?categoryProductId=2&minPrice=100000&maxPrice=5000000&keyword=gaming&page=1&pageSize=12
+```
+
+#### Request Body — `POST /api/Products`
+```json
+{
+  "name": "Chuột gaming XYZ",
+  "description": "Mô tả sản phẩm...",
+  "price": 350000,
+  "stockQuantity": 50,
+  "imageUrl": "/uploads/product.jpg",
+  "categoryProductId": 2
+}
+```
+
+---
+
+### 📋 Orders API (`/api/Orders`)
+*Quản lý đơn hàng — tích hợp Email tự động theo từng trạng thái*
+
+| Method | Endpoint | Mô tả | Auth |
+|---|---|---|---|
+| `GET` | `/api/Orders` | Lấy danh sách tất cả đơn hàng (dành cho quản trị) | ❌ |
+| `GET` | `/api/Orders/{id}` | Lấy chi tiết đơn hàng theo ID (bao gồm danh sách SP) | ❌ |
+| `GET` | `/api/Orders/customer/{customerId}` | Lấy lịch sử mua hàng của một khách hàng | ❌ |
+| `POST` | `/api/Orders` | Đặt hàng mới — trừ tồn kho & **gửi Email xác nhận** | ❌ |
+| `PUT` | `/api/Orders/{id}/status` | Cập nhật trạng thái đơn hàng & **gửi Email thông báo** | ❌ |
+| `DELETE` | `/api/Orders/{id}` | Xóa đơn hàng theo ID (bao gồm OrderDetails) | ❌ |
+
+#### Request Body — `POST /api/Orders` (Đặt hàng mới)
+```json
+{
+  "customerId": 1,
+  "notes": "Giao giờ hành chính",
+  "items": [
+    {
+      "productId": 5,
+      "quantity": 2,
+      "unitPrice": 350000
+    },
+    {
+      "productId": 8,
+      "quantity": 1,
+      "unitPrice": 1200000
+    }
+  ]
+}
+```
+
+#### Request Body — `PUT /api/Orders/{id}/status` (Cập nhật trạng thái)
+```json
+{
+  "status": 1
+}
+```
+
+#### Trạng Thái Đơn Hàng
+| Giá trị | Trạng thái | Màu Email | Email gửi |
+|---|---|---|---|
+| `0` | ⏳ Chờ duyệt (Đang xử lý) | 🟠 Orange | Khi cập nhật về 0 |
+| `1` | 🚚 Đang giao hàng | 🔵 Blue | Khi chuyển sang 1 |
+| `2` | ✅ Đã hoàn thành | 🟢 Green | Khi chuyển sang 2 |
+
+#### Response — `GET /api/Orders/{id}`
+```json
+{
+  "id": 1,
+  "orderDate": "2026-07-01T10:30:00",
+  "status": 1,
+  "notes": "Giao giờ hành chính",
+  "customer": {
+    "id": 1,
+    "fullName": "Nguyễn Văn A",
+    "email": "nguyenvana@gmail.com",
+    "phone": "0901234567",
+    "address": "123 Lê Lợi, TP.HCM"
+  },
+  "totalAmount": 1900000,
+  "items": [
+    {
+      "id": 1,
+      "productId": 5,
+      "productName": "Chuột gaming XYZ",
+      "productImage": "/uploads/product.jpg",
+      "quantity": 2,
+      "unitPrice": 350000
+    }
+  ]
+}
+```
+
+---
+
+### 🏷️ Categories API (`/api/Categories`)
+*Quản lý danh mục bài viết tin tức*
+
+| Method | Endpoint | Mô tả | Auth |
+|---|---|---|---|
+| `GET` | `/api/Categories` | Lấy toàn bộ danh mục bài viết | ❌ |
+| `GET` | `/api/Categories/{id}` | Lấy chi tiết một danh mục theo ID | ❌ |
+| `POST` | `/api/Categories` | Thêm danh mục mới (kiểm tra trùng tên) | ❌ |
+| `PUT` | `/api/Categories/{id}` | Cập nhật danh mục theo ID | ❌ |
+| `DELETE` | `/api/Categories/{id}` | Xóa danh mục theo ID | ❌ |
+
+#### Request Body — `POST /api/Categories`
+```json
+{
+  "name": "Tin Công Nghệ",
+  "description": "Các bài viết về công nghệ mới nhất"
+}
+```
+
+---
+
+### 📦 Category Products API (`/api/CategoryProducts`)
+*Quản lý danh mục sản phẩm thương mại điện tử*
+
+| Method | Endpoint | Mô tả | Auth |
+|---|---|---|---|
+| `GET` | `/api/CategoryProducts` | Lấy toàn bộ danh mục sản phẩm | ❌ |
+| `GET` | `/api/CategoryProducts/{id}` | Lấy chi tiết một danh mục sản phẩm | ❌ |
+| `POST` | `/api/CategoryProducts` | Thêm danh mục sản phẩm mới | ❌ |
+| `PUT` | `/api/CategoryProducts/{id}` | Cập nhật danh mục sản phẩm | ❌ |
+| `DELETE` | `/api/CategoryProducts/{id}` | Xóa danh mục sản phẩm | ❌ |
+
+---
+
+### 👥 Customers API (`/api/customers`)
+*Quản lý thông tin khách hàng mua sắm*
+
+| Method | Endpoint | Mô tả | Auth |
+|---|---|---|---|
+| `GET` | `/api/customers` | Lấy danh sách toàn bộ khách hàng | ❌ |
+| `GET` | `/api/customers/{id}` | Lấy chi tiết một khách hàng theo ID | ❌ |
+| `POST` | `/api/customers` | Thêm khách hàng mới (kiểm tra trùng Email) | ❌ |
+| `PUT` | `/api/customers/{id}` | Cập nhật thông tin khách hàng theo ID | ❌ |
+| `DELETE` | `/api/customers/{id}` | Xóa khách hàng theo ID | ❌ |
+| `GET` | `/api/customers/delete/{id}` | Xóa khách hàng (alias dạng GET, dùng cho redirect) | ❌ |
+
+---
+
+### 🖼️ Banners API (`/api/Banners`)
+*Quản lý banner quảng cáo trang chủ*
+
+| Method | Endpoint | Mô tả | Auth |
+|---|---|---|---|
+| `GET` | `/api/Banners` | Lấy banner đang kích hoạt (`IsActive = true`), sắp xếp theo thứ tự | ❌ |
+| `GET` | `/api/Banners/all` | Lấy toàn bộ banner (kể cả đã ẩn) — dành cho quản trị | ❌ |
+| `GET` | `/api/Banners/{id}` | Lấy chi tiết một banner theo ID | ❌ |
+| `POST` | `/api/Banners` | Thêm banner mới | ❌ |
+| `PUT` | `/api/Banners/{id}` | Cập nhật thông tin banner | ❌ |
+| `DELETE` | `/api/Banners/{id}` | Xóa banner theo ID | ❌ |
+
+#### Request Body — `POST /api/Banners`
+```json
+{
+  "title": "Khuyến mãi mùa hè 2026",
+  "description": "Giảm đến 50% toàn bộ sản phẩm",
+  "imageUrl": "/uploads/banner1.jpg",
+  "linkUrl": "/shop",
+  "order": 1,
+  "isActive": true
+}
+```
+
+---
+
+### 👤 Users API (`/api/users`)
+*Quản lý tài khoản người dùng quản trị (Admin/Editor)*
+
+| Method | Endpoint | Mô tả | Auth |
+|---|---|---|---|
+| `GET` | `/api/users` | Lấy danh sách tài khoản quản trị | ❌ |
+| `GET` | `/api/users/{id}` | Lấy chi tiết một tài khoản quản trị theo ID | ❌ |
+| `POST` | `/api/users` | Tạo mới tài khoản quản trị (mật khẩu tự động hash SHA256) | ❌ |
+| `PUT` | `/api/users/{id}` | Cập nhật thông tin tài khoản quản trị | ❌ |
+| `DELETE` | `/api/users/{id}` | Xóa tài khoản quản trị | ❌ |
+| `GET` | `/api/users/delete/{id}` | Xóa tài khoản (alias dạng GET, dùng cho redirect) | ❌ |
+
+#### Request Body — `POST /api/users`
+```json
+{
+  "username": "admin01",
+  "passwordHash": "matkhau123",
+  "fullName": "Quản trị viên",
+  "role": "Admin"
+}
+```
+
+---
+
+### 📧 Hệ Thống Email Tự Động
+
+Hệ thống tích hợp **EmailService** gửi email qua **SMTP Gmail** (SSL/TLS, port 587) với 3 loại email tự động:
+
+#### 1. 📦 Email Xác Nhận Đặt Hàng
+- **Khi nào gửi:** Ngay sau khi khách hàng đặt hàng thành công (`POST /api/Orders`)
+- **Tiêu đề:** `✅ Xác nhận đơn hàng #{orderId} - V.DinhCMS.GMGear`
+- **Nội dung:** Tên khách hàng, mã đơn hàng, bảng chi tiết sản phẩm (tên, số lượng, đơn giá, thành tiền), tổng tiền, ghi chú đơn hàng
+- **Lưu ý:** Lỗi gửi email **KHÔNG** làm thất bại đơn hàng (hệ thống ghi log và tiếp tục)
+
+#### 2. 🔑 Email Quên Mật Khẩu
+- **Khi nào gửi:** Khi khách hàng gọi `POST /api/Auth/forgot-password`
+- **Tiêu đề:** `🔑 Khôi phục mật khẩu - V.DinhCMS.GMGear`
+- **Nội dung:** Tên khách hàng, mật khẩu mới ngẫu nhiên 8 ký tự (hiển thị dạng monospace), cảnh báo bảo mật, nút "Đăng nhập ngay"
+- **Cơ chế:** Tạo mật khẩu ngẫu nhiên → mã hóa SHA256+Salt → lưu DB → gửi mật khẩu rõ qua Email
+
+#### 3. 🔔 Email Cập Nhật Trạng Thái Đơn Hàng
+- **Khi nào gửi:** Mỗi lần admin cập nhật trạng thái (`PUT /api/Orders/{id}/status`)
+- **Tiêu đề:** `🔔 Cập nhật trạng thái đơn hàng #{orderId} - V.DinhCMS.GMGear`
+- **Nội dung:** Tên khách hàng, mã đơn hàng, trạng thái mới (màu sắc khác nhau theo trạng thái), tổng tiền
+- **Màu sắc trạng thái trong Email:**
+  - 🟠 **Chờ duyệt** (`status=0`) → `#FFA500`
+  - 🔵 **Đang giao hàng** (`status=1`) → `#007BFF`
+  - 🟢 **Đã hoàn thành** (`status=2`) → `#28A745`
+
+#### Cấu Hình Email (`appsettings.json`)
+```json
+{
+  "EmailSettings": {
+    "SmtpServer": "smtp.gmail.com",
+    "SmtpPort": "587",
+    "SenderEmail": "your-email@gmail.com",
+    "SenderName": "VanDinhCMS GMGear",
+    "AppPassword": "xxxx-xxxx-xxxx-xxxx"
+  }
+}
+```
 
 ---
 
@@ -323,7 +696,7 @@ dotnet ef database update
 cd CMS.Backend
 dotnet run
 ```
-Hoặc nhấn **F5** trong Visual Studio. Backend sẽ chạy tại `https://localhost:7xxx`.
+Hoặc nhấn **F5** trong Visual Studio. Backend sẽ chạy tại `https://localhost:7125`.
 
 ### Bước 5: Chạy Frontend (React)
 ```bash
@@ -423,21 +796,87 @@ Request → Swagger → ExceptionHandler → HTTPS Redirect → Static Files
 
 ## 🧪 Kiểm Thử API
 
-Truy cập Swagger UI để kiểm thử API:
+Truy cập **Swagger UI** để kiểm thử tất cả API trực tiếp trên trình duyệt:
 ```
 https://localhost:{port}/swagger
 ```
 
-Hoặc sử dụng cURL:
+### Ví dụ cURL
+
+#### 🔐 Auth
+```bash
+# Đăng ký tài khoản mới
+curl -X POST https://localhost:{port}/api/Auth/register \
+  -H "Content-Type: application/json" \
+  -d '{"fullName":"Nguyễn Văn A","email":"a@gmail.com","password":"123456"}'
+
+# Đăng nhập
+curl -X POST https://localhost:{port}/api/Auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"email":"a@gmail.com","password":"123456"}'
+
+# Quên mật khẩu (gửi email tự động)
+curl -X POST https://localhost:{port}/api/Auth/forgot-password \
+  -H "Content-Type: application/json" \
+  -d '{"email":"a@gmail.com"}'
+
+# Lấy thông tin cá nhân
+curl -X GET https://localhost:{port}/api/Auth/profile/1
+```
+
+#### 📝 Posts
 ```bash
 # Lấy tất cả bài viết
-curl -X GET https://localhost:{port}/api/posts
+curl -X GET https://localhost:{port}/api/Posts
 
-# Lấy bài viết theo ID
-curl -X GET https://localhost:{port}/api/posts/1
+# Lấy bài viết có phân trang
+curl -X GET "https://localhost:{port}/api/Posts?page=1&pageSize=6"
+
+# Lấy chi tiết bài viết
+curl -X GET https://localhost:{port}/api/Posts/1
 
 # Lấy bài viết theo danh mục
-curl -X GET https://localhost:{port}/api/posts/category/1
+curl -X GET https://localhost:{port}/api/Posts/category/1
+```
+
+#### 🛍️ Products
+```bash
+# Lấy tất cả sản phẩm
+curl -X GET https://localhost:{port}/api/Products
+
+# Lọc sản phẩm nâng cao
+curl -X GET "https://localhost:{port}/api/Products?categoryProductId=2&minPrice=100000&maxPrice=5000000&keyword=gaming&page=1&pageSize=12"
+
+# Lấy sản phẩm mới nhất
+curl -X GET https://localhost:{port}/api/Products/latest
+
+# Lấy sản phẩm bán chạy
+curl -X GET https://localhost:{port}/api/Products/hot
+```
+
+#### 📋 Orders
+```bash
+# Đặt hàng mới (tự động gửi email xác nhận)
+curl -X POST https://localhost:{port}/api/Orders \
+  -H "Content-Type: application/json" \
+  -d '{"customerId":1,"notes":"Giao giờ hành chính","items":[{"productId":5,"quantity":2,"unitPrice":350000}]}'
+
+# Cập nhật trạng thái đơn hàng (tự động gửi email thông báo)
+curl -X PUT https://localhost:{port}/api/Orders/1/status \
+  -H "Content-Type: application/json" \
+  -d '{"status":1}'
+
+# Lấy lịch sử mua hàng của khách
+curl -X GET https://localhost:{port}/api/Orders/customer/1
+```
+
+#### 🖼️ Banners
+```bash
+# Lấy banner đang kích hoạt (dành cho Frontend)
+curl -X GET https://localhost:{port}/api/Banners
+
+# Lấy toàn bộ banner (dành cho quản trị)
+curl -X GET https://localhost:{port}/api/Banners/all
 ```
 
 ---
