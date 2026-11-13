@@ -458,4 +458,4 @@ Dự án này được phát triển phục vụ mục đích học tập và ng
 
 ---
 
-> **VanDinhCMS** - Xây dựng bởi Huỳnh Văn Định (MSSV: 2123110052)
+> **VanDinhCMS** - Xây dựng bởi Huỳnh Văn Định
